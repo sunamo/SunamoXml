@@ -1,5 +1,3 @@
-using System.Xml;
-
 /// <summary>
 /// Use System.Xml NS
 /// </summary>

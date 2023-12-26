@@ -1,8 +1,62 @@
-﻿using System.Diagnostics;
-using System.Xml;
-
 public static partial class XmlHelper
 {
+    /// <summary>
+    ///     Usage: FubuCsprojFile
+    ///     
+    /// A2 is used only in exception
+    /// </summary>
+    /// <param name="xmlContent"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string FormatXmlInMemory(string xmlContent, string path = Consts.se)
+    {
+        MemoryStream mStream = new();
+        XmlTextWriter writer = new(mStream, Encoding.Unicode);
+        //XmlNamespacesHolder h = new XmlNamespacesHolder();
+
+        //document = h.ParseAndRemoveNamespacesXmlDocument(xml);
+        XmlDocument document = new();
+
+        string result;
+        try
+        {
+            document.LoadXml(xmlContent);
+
+            writer.Formatting = Formatting.Indented;
+
+            // Write the XML into a formatting XmlTextWriter
+            document.WriteContentTo(writer);
+            writer.Flush();
+            mStream.Flush();
+
+            // Have to rewind the MemoryStream in order to read
+            // its contents.
+            mStream.Position = 0;
+
+            // Read MemoryStream contents into a StreamReader.
+            StreamReader sReader = new(mStream);
+
+            // Extract the text from the StreamReader.
+            var formattedXml = sReader.ReadToEnd();
+
+            result = formattedXml;
+        }
+        catch (XmlException ex)
+        {
+            var nl = Environment.NewLine;
+
+
+            return Consts.Exception + path + nl + nl + ex.Message;
+            //ThrowEx.CustomWithStackTrace(ex);
+        }
+
+        mStream.Close();
+        // 'Cannot access a closed Stream.'
+        //writer.Close();
+
+        return result;
+    }
+
     public static string GetAttrValueOrInnerElement(XmlNode item, string v)
     {
         var attr = item.Attributes[v];
@@ -19,6 +73,20 @@ public static partial class XmlHelper
             return el?.Value;
         }
         Debugger.Break();
+        return null;
+    }
+
+    public static string GetAttributeWithNameValue(XmlNode item, string p)
+    {
+        foreach (XmlAttribute item2 in item.Attributes)
+        {
+            if (item2.Name == p)
+            {
+                foundedNode = item2;
+                return item2.InnerXml;
+            }
+        }
+
         return null;
     }
 
