@@ -1,3 +1,5 @@
+namespace SunamoXml;
+
 public class XmlNamespacesHolder
 {
     //public NameTable nt = new NameTable();
@@ -30,11 +32,11 @@ public class XmlNamespacesHolder
         XmlDocument xd = new XmlDocument();
 
         /*
-         * In default state have already three keys:
-         * "" = ""
-xmlns=http://www.w3.org/2000/xmlns/
-xml=http://www.w3.org/XML/1998/namespace
-         */
+        * In default state have already three keys:
+        * "" = ""
+        xmlns=http://www.w3.org/2000/xmlns/
+        xml=http://www.w3.org/XML/1998/namespace
+        */
         nsmgr = new XmlNamespaceManager(nt);
 
         xd.LoadXml(content);

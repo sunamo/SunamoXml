@@ -1,3 +1,5 @@
+namespace SunamoXml.Generators;
+
 public class XmlGeneratorResources
 {
     private XmlGenerator _xml = new XmlGenerator();

@@ -1,3 +1,5 @@
+namespace SunamoXml;
+
 /// <summary>
 /// XH = XmlElement
 /// XHelper = XElement
@@ -13,18 +15,18 @@ public partial class XHelper
 #if ASYNC
     async Task<string>
 #else
-    string
+string
 #endif
- FormatXml(string pathOrContent)
+    FormatXml(string pathOrContent)
     {
         var xmlFormat = pathOrContent;
         if (FS.ExistsFile(pathOrContent))
         {
             xmlFormat =
 #if ASYNC
-    await
+            await
 #endif
- TFSE.ReadAllText(pathOrContent);
+            TFSE.ReadAllText(pathOrContent);
         }
 
         XmlNamespacesHolder h = new XmlNamespacesHolder();
@@ -38,7 +40,7 @@ public partial class XHelper
 #if ASYNC
             await
 #endif
-         TFSE.WriteAllText(pathOrContent, formatted);
+            TFSE.WriteAllText(pathOrContent, formatted);
             ThisApp.SetStatus(TypeOfMessage.Success, sess.i18n(XlfKeys.ChangesSavedToFile));
             return null;
         }
@@ -83,9 +85,9 @@ public partial class XHelper
     public static XElement GetElementOfNameRecursive(XElement node, string nazev)
     {
         //bool ns = true;
-        if (nazev.Contains(AllStrings.colon))
+        if (nazev.Contains(AllStringsSE.colon))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllCharsSE.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.DescendantsAndSelf())
             {
@@ -117,7 +119,7 @@ public partial class XHelper
     public static string ReturnValueAllSubElementsSeparatedBy(XElement p, string deli)
     {
         StringBuilder sb = new StringBuilder();
-        string xml = XHelper.GetXml(p);
+        string xml = GetXml(p);
         MatchCollection mc = Regex.Matches(xml, "<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>");
         List<string> nahrazeno = new List<string>();
         foreach (Match item in mc)

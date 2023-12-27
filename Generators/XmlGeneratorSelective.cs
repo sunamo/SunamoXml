@@ -1,3 +1,5 @@
+namespace SunamoXml.Generators;
+
 public class XmlGeneratorSelective : XmlGenerator
 {
     /// <summary>
@@ -17,7 +19,7 @@ public class XmlGeneratorSelective : XmlGenerator
                 sb.AppendFormat("{0}=\"{1}\"", nameAtt, p_2[i * 2 + 1]);
             }
         }
-        sb.Append(AllStrings.gt);
+        sb.Append(AllStringsSE.gt);
     }
 
     public override string ToString()

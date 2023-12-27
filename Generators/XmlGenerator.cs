@@ -1,3 +1,5 @@
+namespace SunamoXml.Generators;
+
 /// <summary>
 /// Našel jsem ještě třídu DotXml ale ta umožňuje vytvářet jen dokumenty ke bude root ThisApp.Name
 /// A nebo moje vlastní XML třídy, ale ty umí vytvářet jen třídy bez rozsáhlejšího xml vnoření.
@@ -82,7 +84,7 @@ public class XmlGenerator
 
     public void WriteCData(string innerCData)
     {
-        this.WriteRaw(/*SH.Format2("<![CDATA[{0}]]>", innerCData)*/ string.Format("<![CDATA[{0}]]>", innerCData));
+        WriteRaw(/*SH.Format2("<![CDATA[{0}]]>", innerCData)*/ string.Format("<![CDATA[{0}]]>", innerCData));
     }
 
     public void WriteTagWithAttr(string tag, string atribut, string hodnota, bool skipEmptyOrNull = false)
@@ -201,9 +203,9 @@ public class XmlGenerator
         {
             var attr = p_2[i];
             var val = p_2[++i];
-            if ((string.IsNullOrEmpty(val) && appendNull) || !string.IsNullOrEmpty(val))
+            if (string.IsNullOrEmpty(val) && appendNull || !string.IsNullOrEmpty(val))
             {
-                if ((!IsNulledOrEmpty(attr) && appendNull) || !IsNulledOrEmpty(val))
+                if (!IsNulledOrEmpty(attr) && appendNull || !IsNulledOrEmpty(val))
                 {
 
                     sb.AppendFormat("{0}=\"{1}\" ", attr, val);
@@ -211,7 +213,7 @@ public class XmlGenerator
             }
         }
         sb.Append(" /");
-        sb.Append(AllStrings.gt);
+        sb.Append(AllStringsSE.gt);
         string r = sb.ToString();
         if (_useStack)
         {
@@ -233,16 +235,16 @@ public class XmlGenerator
         {
             var attr = p_2[i];
             var val = p_2[++i];
-            if ((string.IsNullOrEmpty(val) && appendNull) || !string.IsNullOrEmpty(val))
+            if (string.IsNullOrEmpty(val) && appendNull || !string.IsNullOrEmpty(val))
             {
-                if ((!IsNulledOrEmpty(attr) && appendNull) || !IsNulledOrEmpty(val))
+                if (!IsNulledOrEmpty(attr) && appendNull || !IsNulledOrEmpty(val))
                 {
 
                     sb.AppendFormat("{0}=\"{1}\" ", attr, val);
                 }
             }
         }
-        sb.Append(AllStrings.gt);
+        sb.Append(AllStringsSE.gt);
         string r = sb.ToString();
         if (_useStack)
         {
@@ -268,7 +270,7 @@ public class XmlGenerator
         {
             _stack.Push(r);
         }
-        this.sb.Append(r);
+        sb.Append(r);
     }
 
     public void WriteNonPairTag(string p)

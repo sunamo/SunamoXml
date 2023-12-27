@@ -1,4 +1,5 @@
 namespace SunamoXml._sunamo;
+
 internal class SH
 {
     internal static Func<string, string> ReplaceAllDoubleSpaceToSingle;

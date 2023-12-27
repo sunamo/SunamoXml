@@ -1,4 +1,5 @@
 namespace SunamoXml._sunamo;
+
 internal class DictionaryHelper
 {
     internal static List<string> GetListStringFromDictionary(Dictionary<string, string> p)
