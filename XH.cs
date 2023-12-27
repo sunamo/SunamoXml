@@ -14,17 +14,17 @@ public partial class XH
 
     public static
 #if ASYNC
-async Task
+    async Task
 #else
-void  
+void
 #endif
-AddXmlns(string csproj, XNamespace ns, bool add)
+    AddXmlns(string csproj, XNamespace ns, bool add)
     {
         if (add)
         {
             XDocument xml =
 #if ASYNC
-                XDocument.Load(csproj);
+            XDocument.Load(csproj);
             //await XDocument.LoadAsync(csproj);
 #else
 XDocument.Load(csproj);
@@ -39,15 +39,15 @@ XDocument.Load(csproj);
         {
             var text =
 #if ASYNC
-await
+            await
 #endif
-TFSE.ReadAllText(csproj);
+            TFSE.ReadAllText(csproj);
             text = RemoveNs(ns, text);
 
 #if ASYNC
             await
 #endif
-         TFSE.WriteAllText(csproj, text);
+            TFSE.WriteAllText(csproj, text);
         }
     }
 
@@ -91,7 +91,7 @@ TFSE.ReadAllText(csproj);
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="xml"></param>
     public static string InnerXml(string xml)
@@ -102,7 +102,7 @@ TFSE.ReadAllText(csproj);
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static string ReplaceSpecialHtmlEntity(string vstup)
     {
@@ -113,7 +113,7 @@ TFSE.ReadAllText(csproj);
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="xml"></param>
     public static string ReplaceAmpInString(string xml)
@@ -193,12 +193,12 @@ TFSE.ReadAllText(csproj);
     {
         return
 
-             character == 0x9 /* == '\t' == 9   */          ||
-             character == 0xA /* == '\n' == 10  */          ||
-             character == 0xD /* == '\r' == 13  */          ||
-            character >= 0x20 && character <= 0xD7FF ||
-            character >= 0xE000 && character <= 0xFFFD ||
-            character >= 0x10000 && character <= 0x10FFFF
+        character == 0x9 /* == '\t' == 9   */          ||
+        character == 0xA /* == '\n' == 10  */          ||
+        character == 0xD /* == '\r' == 13  */          ||
+        character >= 0x20 && character <= 0xD7FF ||
+        character >= 0xE000 && character <= 0xFFFD ||
+        character >= 0x10000 && character <= 0x10FFFF
         ;
     }
 
@@ -208,19 +208,19 @@ TFSE.ReadAllText(csproj);
     /// <param name="xml"></param>
     public static
 #if ASYNC
-async Task<XmlDocument>
+    async Task<XmlDocument>
 #else
-  XmlDocument
+XmlDocument
 #endif
-LoadXml(string xml)
+    LoadXml(string xml)
     {
         if (FS.ExistsFile(xml))
         {
             xml =
 #if ASYNC
-await
+            await
 #endif
-TFSE.ReadAllText(xml);
+            TFSE.ReadAllText(xml);
         }
 
         XmlDocument xd = new XmlDocument();

@@ -1,3 +1,5 @@
+namespace SunamoXml;
+
 /// <summary>
 /// XH = XmlElement
 /// XHelper = XElement
@@ -185,19 +187,19 @@ public partial class XHelper
 
     public static
 #if ASYNC
-        async Task<XDocument>
+    async Task<XDocument>
 #else
-      XDocument
+XDocument
 #endif
-     CreateXDocument(string contentOrFn)
+    CreateXDocument(string contentOrFn)
     {
         if (FS.ExistsFile(contentOrFn))
         {
             contentOrFn =
 #if ASYNC
-    await
+            await
 #endif
- TF.ReadAllText(contentOrFn);
+            TF.ReadAllText(contentOrFn);
         }
 
         var enB = BTS.ConvertFromUtf8ToBytes(contentOrFn);
@@ -283,7 +285,6 @@ public partial class XHelper
     /// <param name = "namespaceName"></param>
     public static bool IsRightTag(XName xName, string localName, string namespaceName)
     {
-        namespaceName = XHelper.ns[namespaceName];
         if (xName.LocalName == localName && xName.NamespaceName == namespaceName)
         {
             return true;
