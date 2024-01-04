@@ -63,7 +63,7 @@ XDocument.Load(csproj);
     private static string RemoveNs(XNamespace ns, string text)
     {
         var xmlns = "xmlns=\"" + ns.ToString() + "\"";
-        text = SH.ReplaceOnce(text, xmlns, string.Empty);
+        text = SHReplace.ReplaceOnce(text, xmlns, string.Empty);
         return text;
     }
 

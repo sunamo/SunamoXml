@@ -347,8 +347,8 @@ XDocument
     public static string Minify(string c)
     {
         c = c.Replace(Environment.NewLine, string.Empty);
-        c = SH.ReplaceAllWhitecharsForSpace(c);
-        c = SH.ReplaceAllDoubleSpaceToSingle(c);
+        c = SHReplace.ReplaceAllWhitecharsForSpace(c);
+        c = SHReplace.ReplaceAllDoubleSpaceToSingle(c);
         c = c.Replace("> <", "><");
         return c;
     }

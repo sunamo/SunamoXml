@@ -1,3 +1,6 @@
+using SunamoEnums.Enums;
+using SunamoI18N;
+
 namespace SunamoXml;
 
 /// <summary>
@@ -34,7 +37,7 @@ string
 
 
         var formatted = doc.ToString();
-        formatted = SH.ReplaceAll2(formatted, string.Empty, " xmlns=\"\"");
+        formatted = SHReplace.ReplaceAll2(formatted, string.Empty, " xmlns=\"\"");
         if (FS.ExistsFile(pathOrContent))
         {
 #if ASYNC

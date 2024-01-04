@@ -14,3 +14,9 @@ global using sunamo.Essential;
 global using SunamoExceptions;
 
 global using SunamoXml._sunamo;
+global using SunamoBts;
+global using SunamoExceptions.InSunamoIsDerivedFrom;
+global using SunamoExceptions.OnlyInSE;
+global using SunamoFileIO;
+global using SunamoValues.Values;
+global using SunamoValues;
