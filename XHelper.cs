@@ -1,6 +1,3 @@
-using SunamoEnums.Enums;
-using SunamoI18N;
-
 namespace SunamoXml;
 
 /// <summary>
@@ -44,12 +41,12 @@ string
             await
 #endif
             TFSE.WriteAllText(pathOrContent, formatted);
-            ThisApp.SetStatus(TypeOfMessage.Success, sess.i18n(XlfKeys.ChangesSavedToFile));
+            ThisApp.Success( sess.i18n(XlfKeys.ChangesSavedToFile));
             return null;
         }
         else
         {
-            ThisApp.SetStatus(TypeOfMessage.Success, sess.i18n(XlfKeys.ChangesSavedToClipboard));
+            ThisApp.Success( sess.i18n(XlfKeys.ChangesSavedToClipboard));
             return formatted;
         }
     }

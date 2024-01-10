@@ -1,3 +1,5 @@
+using SunamoExtensions;
+
 namespace SunamoXml;
 
 
@@ -25,7 +27,7 @@ public static partial class XmlHelper
         {
             document.LoadXml(xmlContent);
 
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = System.Xml.Formatting.Indented;
 
             // Write the XML into a formatting XmlTextWriter
             document.WriteContentTo(writer);
