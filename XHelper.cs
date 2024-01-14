@@ -1,3 +1,5 @@
+using SunamoI18N.Values;
+
 namespace SunamoXml;
 
 /// <summary>
@@ -41,12 +43,12 @@ string
             await
 #endif
             TFSE.WriteAllText(pathOrContent, formatted);
-            ThisApp.Success( sess.i18n(XlfKeys.ChangesSavedToFile));
+            ThisApp.Success(sess.i18n(XlfKeys.ChangesSavedToFile));
             return null;
         }
         else
         {
-            ThisApp.Success( sess.i18n(XlfKeys.ChangesSavedToClipboard));
+            ThisApp.Success(sess.i18n(XlfKeys.ChangesSavedToClipboard));
             return formatted;
         }
     }
