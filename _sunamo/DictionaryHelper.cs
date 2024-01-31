@@ -1,8 +1,8 @@
 namespace SunamoXml._sunamo;
 
-internal class DictionaryHelper
+public class DictionaryHelper
 {
-    internal static List<string> GetListStringFromDictionary(Dictionary<string, string> p)
+    public static List<string> GetListStringFromDictionary(Dictionary<string, string> p)
     {
         List<string> vr = new List<string>();
 

@@ -1,5 +1,3 @@
-using SunamoI18N.Values;
-
 namespace SunamoXml;
 
 /// <summary>
@@ -65,7 +63,7 @@ XDocument.Load(csproj);
     private static string RemoveNs(XNamespace ns, string text)
     {
         var xmlns = "xmlns=\"" + ns.ToString() + "\"";
-        text = SHReplace.ReplaceOnce(text, xmlns, string.Empty);
+        text = SHSH.ReplaceOnce(text, xmlns, string.Empty);
         return text;
     }
 
@@ -216,7 +214,7 @@ XmlDocument
 #endif
     LoadXml(string xml)
     {
-        if (FS.ExistsFile(xml))
+        if (File.Exists(xml))
         {
             xml =
 #if ASYNC

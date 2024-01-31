@@ -72,7 +72,7 @@ public partial class XHelper
 
         if (nazev.Contains(AllStrings.colon))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.Elements())
             {
@@ -193,7 +193,7 @@ XDocument
 #endif
     CreateXDocument(string contentOrFn)
     {
-        if (FS.ExistsFile(contentOrFn))
+        if (File.Exists(contentOrFn))
         {
             contentOrFn =
 #if ASYNC
@@ -224,7 +224,7 @@ XDocument
 
         if (nazev.Contains(AllStrings.colon))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.Elements())
             {
@@ -264,7 +264,7 @@ XDocument
     public static bool IsRightTag(XName xName, string nazev)
     {
 
-        var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+        var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
         p = XHelper.ns[p];
         if (xName.LocalName == z && xName.NamespaceName == p)
         {
@@ -300,7 +300,7 @@ XDocument
         foreach (XElement item in e)
         {
             var attrValue = XHelper.Attr(item, attr);
-            if (SH.ContainsBoolBool(attrValue, value, enoughIsContainsAttribute, caseSensitive))
+            if (SHSH.ContainsBoolBool(attrValue, value, enoughIsContainsAttribute, caseSensitive))
             {
                 vr.Add(item);
             }
@@ -320,7 +320,7 @@ XDocument
 
         if (nazev.Contains(AllStrings.colon))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.DescendantsAndSelf())
             {

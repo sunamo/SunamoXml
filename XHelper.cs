@@ -1,5 +1,3 @@
-using SunamoI18N.Values;
-
 namespace SunamoXml;
 
 /// <summary>
@@ -22,7 +20,7 @@ string
     FormatXml(string pathOrContent)
     {
         var xmlFormat = pathOrContent;
-        if (FS.ExistsFile(pathOrContent))
+        if (File.Exists(pathOrContent))
         {
             xmlFormat =
 #if ASYNC
@@ -37,7 +35,7 @@ string
 
         var formatted = doc.ToString();
         formatted = SHReplace.ReplaceAll2(formatted, string.Empty, " xmlns=\"\"");
-        if (FS.ExistsFile(pathOrContent))
+        if (File.Exists(pathOrContent))
         {
 #if ASYNC
             await
@@ -89,7 +87,7 @@ string
         //bool ns = true;
         if (nazev.Contains(AllStringsSE.colon))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllCharsSE.colon);
+            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllCharsSE.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.DescendantsAndSelf())
             {
