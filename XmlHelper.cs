@@ -1,4 +1,7 @@
+
 namespace SunamoXml;
+using SunamoXml._sunamo;
+
 
 
 public static partial class XmlHelper

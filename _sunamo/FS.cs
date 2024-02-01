@@ -1,6 +1,8 @@
+namespace SunamoXml._sunamo;
+
 //namespace SunamoXml._sunamo;
 
-//public class FS
+//internal class FS
 //{
-//    public static Func<string, bool> ExistsFile;
+//    internal static Func<string, bool> ExistsFile;
 //}

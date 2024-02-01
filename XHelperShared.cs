@@ -1,4 +1,7 @@
+
 namespace SunamoXml;
+using SunamoXml._sunamo;
+
 
 /// <summary>
 /// XH = XmlElement
@@ -72,7 +75,7 @@ public partial class XHelper
 
         if (nazev.Contains(AllStrings.colon))
         {
-            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.Elements())
             {
@@ -199,10 +202,10 @@ XDocument
 #if ASYNC
             await
 #endif
-            TF.ReadAllText(contentOrFn);
+            File.ReadAllTextAsync(contentOrFn);
         }
 
-        var enB = BTS.ConvertFromUtf8ToBytes(contentOrFn);
+        var enB = Encoding.UTF8.GetBytes(contentOrFn).ToList();
         XDocument xd = null;
         using (MemoryStream oStream = new MemoryStream(enB.ToArray()))
         using (XmlReader oReader = XmlReader.Create(oStream))
@@ -224,7 +227,7 @@ XDocument
 
         if (nazev.Contains(AllStrings.colon))
         {
-            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.Elements())
             {
@@ -264,7 +267,7 @@ XDocument
     public static bool IsRightTag(XName xName, string nazev)
     {
 
-        var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+        var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
         p = XHelper.ns[p];
         if (xName.LocalName == z && xName.NamespaceName == p)
         {
@@ -300,7 +303,7 @@ XDocument
         foreach (XElement item in e)
         {
             var attrValue = XHelper.Attr(item, attr);
-            if (SHSH.ContainsBoolBool(attrValue, value, enoughIsContainsAttribute, caseSensitive))
+            if (attrValue.Contains(value) /*SH.ContainsBoolBool(attrValue, value, enoughIsContainsAttribute, caseSensitive)*/)
             {
                 vr.Add(item);
             }
@@ -320,7 +323,7 @@ XDocument
 
         if (nazev.Contains(AllStrings.colon))
         {
-            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.DescendantsAndSelf())
             {

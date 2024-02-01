@@ -1,4 +1,7 @@
+
 namespace SunamoXml;
+using SunamoXml._sunamo;
+
 
 /// <summary>
 /// XH = XmlElement
@@ -34,19 +37,20 @@ string
 
 
         var formatted = doc.ToString();
-        formatted = SHReplace.ReplaceAll2(formatted, string.Empty, " xmlns=\"\"");
+        formatted = formatted.Replace(" xmlns=\"\"", string.Empty);
+        //HReplace.ReplaceAll2(formatted, string.Empty, " xmlns=\"\"");
         if (File.Exists(pathOrContent))
         {
 #if ASYNC
             await
 #endif
             TFSE.WriteAllText(pathOrContent, formatted);
-            ThisApp.Success(sess.i18n(XlfKeys.ChangesSavedToFile));
+            //ThisApp.Success(sess.i18n(XlfKeys.ChangesSavedToFile));
             return null;
         }
         else
         {
-            ThisApp.Success(sess.i18n(XlfKeys.ChangesSavedToClipboard));
+            //ThisApp.Success(sess.i18n(XlfKeys.ChangesSavedToClipboard));
             return formatted;
         }
     }
@@ -87,7 +91,7 @@ string
         //bool ns = true;
         if (nazev.Contains(AllStringsSE.colon))
         {
-            var (p, z) = SHSH.GetPartsByLocationNoOut(nazev, AllCharsSE.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllCharsSE.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.DescendantsAndSelf())
             {

@@ -1,17 +1,19 @@
+
 namespace SunamoXml._sunamo;
+//namespace SunamoXml._sunamo;
 
-public class DictionaryHelper
-{
-    public static List<string> GetListStringFromDictionary(Dictionary<string, string> p)
-    {
-        List<string> vr = new List<string>();
+//internal class DictionaryHelper
+//{
+//    internal static List<string> GetListStringFromDictionary(Dictionary<string, string> p)
+//    {
+//        List<string> vr = new List<string>();
 
-        foreach (var item in p)
-        {
-            vr.Add(item.Key);
-            vr.Add(item.Value);
-        }
+//        foreach (var item in p)
+//        {
+//            vr.Add(item.Key);
+//            vr.Add(item.Value);
+//        }
 
-        return vr;
-    }
-}
+//        return vr;
+//    }
+//}

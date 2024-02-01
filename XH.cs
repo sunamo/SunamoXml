@@ -1,4 +1,7 @@
+
 namespace SunamoXml;
+using SunamoXml._sunamo;
+
 
 /// <summary>
 /// XH = XmlElement
@@ -63,7 +66,7 @@ XDocument.Load(csproj);
     private static string RemoveNs(XNamespace ns, string text)
     {
         var xmlns = "xmlns=\"" + ns.ToString() + "\"";
-        text = SHSH.ReplaceOnce(text, xmlns, string.Empty);
+        text = SH.ReplaceOnce(text, xmlns, string.Empty);
         return text;
     }
 
@@ -166,7 +169,7 @@ XDocument.Load(csproj);
     {
         if (xml == null)
         {
-            ThrowEx.IsNull(sess.i18n(XlfKeys.AtributteXmlIsNull));
+            ThrowEx.IsNull("AtributteXmlIsNull");
         }
         //xml = xml.Replace("&", " and ");
         StringBuilder buffer = new StringBuilder(xml.Length);
