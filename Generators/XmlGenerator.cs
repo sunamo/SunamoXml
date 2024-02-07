@@ -1,7 +1,9 @@
+using SunamoXml._sunamo;
+
 namespace SunamoXml.Generators;
 
 
-using SunamoDictionary;
+
 
 
 /// <summary>
@@ -10,7 +12,7 @@ using SunamoDictionary;
 /// Element - prvek kterému se zapisují ihned i innerObsah. Může být i prázdný.
 /// Tag - prvek kterému to mohu zapsat později nebo vůbec.
 /// </summary>
-public class XmlGenerator
+public class XmlGenerator : IXmlGenerator
 {
     static Type type = typeof(XmlGenerator);
     public StringBuilder sb = new StringBuilder();
