@@ -219,7 +219,7 @@ public class XmlGenerator : IXmlGenerator
             }
         }
         sb.Append(" /");
-        sb.Append(AllStringsSE.gt);
+        sb.Append(AllStrings.gt);
         string r = sb.ToString();
         if (_useStack)
         {
@@ -250,7 +250,7 @@ public class XmlGenerator : IXmlGenerator
                 }
             }
         }
-        sb.Append(AllStringsSE.gt);
+        sb.Append(AllStrings.gt);
         string r = sb.ToString();
         if (_useStack)
         {

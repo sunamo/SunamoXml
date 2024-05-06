@@ -89,7 +89,7 @@ string
     public static XElement GetElementOfNameRecursive(XElement node, string nazev)
     {
         //bool ns = true;
-        if (nazev.Contains(AllStringsSE.colon))
+        if (nazev.Contains(AllStrings.colon))
         {
             var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllCharsSE.colon);
             p = XHelper.ns[p];
