@@ -12,3 +12,6 @@ global using System.Text.RegularExpressions;
 global using System.Xml;
 global using System.Xml.Linq;
 global using System.Collections.Immutable;
+global using System.Collections.Generic;
+global using System.Collections;
+

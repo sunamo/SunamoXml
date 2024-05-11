@@ -91,7 +91,7 @@ string
         //bool ns = true;
         if (nazev.Contains(AllStrings.colon))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllCharsSE.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
             p = XHelper.ns[p];
             foreach (XElement item in node.DescendantsAndSelf())
             {
