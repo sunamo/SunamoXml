@@ -1,4 +1,4 @@
-namespace SunamoXml._sunamo;
+namespace SunamoXml;
 
 
 internal class SHReplace

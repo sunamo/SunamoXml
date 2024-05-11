@@ -1,6 +1,6 @@
 using SunamoXml._sunamo;
 
-namespace SunamoXml.Generators;
+namespace SunamoXml;
 
 
 

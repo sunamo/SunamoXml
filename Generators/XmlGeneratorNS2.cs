@@ -1,4 +1,4 @@
-namespace SunamoXml.Generators;
+namespace SunamoXml;
 
 /// <summary>
 /// Nasel jsem jeste tridu DotXml ale ta umoznuje vytvaret jen dokumenty ke bude root ThisApp.Name

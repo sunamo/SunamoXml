@@ -1,5 +1,5 @@
 
-namespace SunamoXml._sunamo;
+namespace SunamoXml;
 //namespace SunamoXml._sunamo;
 
 internal class DictionaryHelper

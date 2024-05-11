@@ -1,4 +1,4 @@
-namespace SunamoXml.Generators;
+namespace SunamoXml;
 
 public class XmlGeneratorResources
 {
