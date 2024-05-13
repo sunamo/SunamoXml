@@ -1,5 +1,5 @@
 namespace SunamoXml;
-using SunamoXml._sunamo;
+
 
 /// <summary>
 /// Use System.Xml NS
