@@ -1,6 +1,6 @@
 namespace SunamoXml;
 
-//namespace SunamoXml._sunamo;
+//namespace SunamoXml;
 
 internal class SH
 {

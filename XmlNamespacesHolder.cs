@@ -1,10 +1,17 @@
-namespace SunamoXml;
+using System.Xml;
+using System.Xml.Linq;
 
+namespace
+#if SunamoWikipedia
+SunamoWikipedia
+#else
+SunamoXml
+#endif
+;
 public class XmlNamespacesHolder
 {
     //public NameTable nt = new NameTable();
     public XmlNamespaceManager nsmgr = null;
-
     /// <summary>
     /// Return XmlDocument but dont use return value
     /// Just use XHelper class, because with XmlDocument is still not working
@@ -13,12 +20,9 @@ public class XmlNamespacesHolder
     public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content)
     {
         XmlDocument xd = new XmlDocument();
-
         xd = ParseAndRemoveNamespacesXmlDocument(content, xd.NameTable);
-
         return xd;
     }
-
     /// <summary>
     /// A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
     /// Return XmlDocument but dont use return value
@@ -30,7 +34,6 @@ public class XmlNamespacesHolder
     public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content, XmlNameTable nt, string defaultPrefix = "x")
     {
         XmlDocument xd = new XmlDocument();
-
         /*
         * In default state have already three keys:
         * "" = ""
@@ -38,9 +41,7 @@ public class XmlNamespacesHolder
         xml=http://www.w3.org/XML/1998/namespace
         */
         nsmgr = new XmlNamespaceManager(nt);
-
         xd.LoadXml(content);
-
         foreach (XmlNode item in xd.ChildNodes)
         {
             if (item.NodeType == XmlNodeType.XmlDeclaration)
@@ -59,19 +60,15 @@ public class XmlNamespacesHolder
                     {
                         key = att.Name.Substring(6);
                     }
-
                     nsmgr.AddNamespace(key, att.Value);
                     // TODO: Delete wrong attribute but in outerXml is still figuring
                     root.Attributes.RemoveAt(i);
                 }
             }
         }
-
         var outer = xd.OuterXml;
-
         return xd;
     }
-
     /// <summary>
     /// Return XmlDocument but dont use return value
     /// Just use XHelper class, because with XmlDocument is still not working
@@ -82,7 +79,6 @@ public class XmlNamespacesHolder
         var xd = ParseAndRemoveNamespacesXmlDocument(content);
         return XDocument.Parse(xd.OuterXml);
     }
-
     /// <summary>
     /// A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
     /// Return XmlDocument but dont use return value

@@ -1,11 +1,12 @@
+using System.Xml;
 
-
-namespace SunamoXml;
-
-
-
-
-
+namespace
+#if SunamoWikipedia
+SunamoWikipedia
+#else
+SunamoXml
+#endif
+;
 /// <summary>
 /// Našel jsem ještě třídu DotXml ale ta umožňuje vytvářet jen dokumenty ke bude root ThisApp.Name
 /// A nebo moje vlastní XML třídy, ale ty umí vytvářet jen třídy bez rozsáhlejšího xml vnoření.
@@ -18,61 +19,49 @@ public class XmlGenerator : IXmlGenerator
     public StringBuilder sb = new StringBuilder();
     private bool _useStack = false;
     private Stack<string> _stack = null;
-
     public int Length()
     {
         return sb.Length;
     }
-
     public void WriteNonPairTagWith2Attrs(string p1, string p2, string p3, string p4, string p5)
     {
         sb.AppendFormat("<{0} {1}=\"{2}\" {3}=\"{4}\" />", p1, p2, p3, p4, p5);
     }
-
     public void WriteNonPairTagWithAttr(string p1, string p2, string p3)
     {
         sb.AppendFormat("<{0} {1}=\"{2}\" />", p1, p2, p3);
     }
-
     public void Insert(int index, string text)
     {
         sb.Insert(index, text);
     }
-
     public void AppendLine()
     {
         sb.AppendLine();
     }
-
     public XmlGenerator() : this(false)
     {
     }
-
     public XmlGenerator(bool useStack)
     {
         _useStack = useStack;
-
         if (useStack)
         {
             _stack = new Stack<string>();
         }
     }
-
     public void StartComment()
     {
         sb.Append("<!--");
     }
-
     public void EndComment()
     {
         sb.Append("-->");
     }
-
     public void WriteNonPairTagWithAttrs(string tag, List<string> args)
     {
         WriteNonPairTagWithAttrs(tag, args.ToArray());
     }
-
     public void WriteNonPairTagWithAttrs(string tag, params string[] args)
     {
         sb.AppendFormat("<{0} ", tag);
@@ -80,19 +69,14 @@ public class XmlGenerator : IXmlGenerator
         {
             string text = args[i];
             object hodnota = args[++i];
-
             sb.AppendFormat("{0}=\"{1}\" ", text, hodnota);
         }
         sb.Append(" />");
     }
-
-
-
     public void WriteCData(string innerCData)
     {
         WriteRaw(/*string.Format("<![CDATA[{0}]]>", innerCData)*/ string.Format("<![CDATA[{0}]]>", innerCData));
     }
-
     public void WriteTagWithAttr(string tag, string atribut, string hodnota, bool skipEmptyOrNull = false)
     {
         if (skipEmptyOrNull)
@@ -102,7 +86,6 @@ public class XmlGenerator : IXmlGenerator
                 return;
             }
         }
-
         string r = /*string.Format*/ string.Format("<{0} {1}=\"{2}\">", tag, atribut, hodnota);
         if (_useStack)
         {
@@ -110,17 +93,14 @@ public class XmlGenerator : IXmlGenerator
         }
         sb.Append(r);
     }
-
     public void WriteRaw(string p)
     {
         sb.Append(p);
     }
-
     public void TerminateTag(string p)
     {
         sb.AppendFormat("</{0}>", p);
     }
-
     public void WriteTag(string p)
     {
         string r = $"<{p}>";
@@ -130,17 +110,14 @@ public class XmlGenerator : IXmlGenerator
         }
         sb.Append(r);
     }
-
     public override string ToString()
     {
         return sb.ToString();
     }
-
     public void WriteTagWithAttrs(string p, List<string> p_2)
     {
         WriteTagWithAttrs(p, p_2.ToArray());
     }
-
     /// <summary>
     /// if will be sth null, wont be writing
     /// </summary>
@@ -150,7 +127,6 @@ public class XmlGenerator : IXmlGenerator
     {
         WriteTagWithAttrs(true, p, p_2);
     }
-
     /// <summary>
     /// Add also null
     /// </summary>
@@ -160,7 +136,6 @@ public class XmlGenerator : IXmlGenerator
     {
         WriteTagWithAttrs(true, nameTag, DictionaryHelper.GetListStringFromDictionary(p).ToArray());
     }
-
     /// <summary>
     /// Dont write attr with null
     /// </summary>
@@ -170,12 +145,10 @@ public class XmlGenerator : IXmlGenerator
     {
         WriteTagWithAttrs(false, p, p_2);
     }
-
     public void WriteTagNamespaceManager(object rss, XmlNamespaceManager nsmgr, string v1, string v2)
     {
         ThrowEx.NotImplementedMethod();
     }
-
     bool IsNulledOrEmpty(string s)
     {
         if (string.IsNullOrEmpty(s) || s == Consts.nulled)
@@ -184,23 +157,16 @@ public class XmlGenerator : IXmlGenerator
         }
         return false;
     }
-
     public void WriteTagNamespaceManager(string nameTag, XmlNamespaceManager nsmgr, params string[] args)
     {
         //List<string> p = new List<string>(args);
-
-
-
         var p = XHelper.XmlNamespaces(nsmgr, true);
-
         for (int i = 0; i < args.Count(); i++)
         {
             p.Add(args[i], args[++i]);
         }
-
         WriteTagWithAttrs(nameTag, p);
     }
-
     public void WriteNonPairTagWithAttrs(bool appendNull, string p, params string[] p_2)
     {
         StringBuilder sb = new StringBuilder();
@@ -213,7 +179,6 @@ public class XmlGenerator : IXmlGenerator
             {
                 if (!IsNulledOrEmpty(attr) && appendNull || !IsNulledOrEmpty(val))
                 {
-
                     sb.AppendFormat("{0}=\"{1}\" ", attr, val);
                 }
             }
@@ -227,7 +192,6 @@ public class XmlGenerator : IXmlGenerator
         }
         this.sb.Append(r);
     }
-
     /// <summary>
     /// if will be sth null, wont be writing
     /// </summary>
@@ -245,7 +209,6 @@ public class XmlGenerator : IXmlGenerator
             {
                 if (!IsNulledOrEmpty(attr) && appendNull || !IsNulledOrEmpty(val))
                 {
-
                     sb.AppendFormat("{0}=\"{1}\" ", attr, val);
                 }
             }
@@ -258,17 +221,14 @@ public class XmlGenerator : IXmlGenerator
         }
         this.sb.Append(r);
     }
-
     public void WriteElement(string nazev, string inner)
     {
         sb.AppendFormat("<{0}>{1}</{0}>", nazev, inner);
     }
-
     public void WriteXmlDeclaration()
     {
         sb.Append(XmlTemplates.xml);
     }
-
     public void WriteTagWith2Attrs(string p, string p_2, string p_3, string p_4, string p_5)
     {
         string r = /*string.Format*/ string.Format("<{0} {1}=\"{2}\" {3}=\"{4}\">", p, p_2, p_3, p_4, p_5);
@@ -278,9 +238,7 @@ public class XmlGenerator : IXmlGenerator
         }
         sb.Append(r);
     }
-
     public void WriteNonPairTag(string p)
-
     {
         sb.AppendFormat("<{0} />", p);
     }

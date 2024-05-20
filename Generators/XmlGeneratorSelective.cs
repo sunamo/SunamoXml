@@ -1,5 +1,10 @@
-namespace SunamoXml;
-
+namespace
+#if SunamoWikipedia
+SunamoWikipedia
+#else
+SunamoXml
+#endif
+;
 public class XmlGeneratorSelective : XmlGenerator
 {
     /// <summary>
@@ -21,7 +26,6 @@ public class XmlGeneratorSelective : XmlGenerator
         }
         sb.Append(AllStrings.gt);
     }
-
     public override string ToString()
     {
         return sb.ToString();

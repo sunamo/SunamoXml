@@ -1,8 +1,12 @@
+using System.Xml.Linq;
 
-namespace SunamoXml;
-
-
-
+namespace
+#if SunamoWikipedia
+SunamoWikipedia
+#else
+SunamoXml
+#endif
+;
 /// <summary>
 /// XH = XmlElement
 /// XHelper = XElement
@@ -14,7 +18,6 @@ public partial class XH
         var xd = XDocument.Parse(xml);
         //xd.Descendants("")
     }
-
     public static
 #if ASYNC
     async Task
@@ -32,10 +35,7 @@ void
 #else
 XDocument.Load(csproj);
 #endif
-
-
             AddNs(ns, xml);
-
             xml.Save(csproj);
         }
         else
@@ -46,14 +46,12 @@ XDocument.Load(csproj);
 #endif
             TFSE.ReadAllText(csproj);
             text = RemoveNs(ns, text);
-
 #if ASYNC
             await
 #endif
             TFSE.WriteAllText(csproj, text);
         }
     }
-
     private static void AddNs(XNamespace ns, XDocument xml)
     {
         foreach (var element in xml.Descendants().ToList())
@@ -62,14 +60,12 @@ XDocument.Load(csproj);
         }
         xml.Root.SetAttributeValue(Consts.xmlns, ns.ToString());
     }
-
     private static string RemoveNs(XNamespace ns, string text)
     {
         var xmlns = "xmlns=\"" + ns.ToString() + "\"";
         text = SH.ReplaceOnce(text, xmlns, string.Empty);
         return text;
     }
-
     public static string AddXmlnsContent(string content, XNamespace ns, bool add)
     {
         if (add)
@@ -83,16 +79,13 @@ XDocument.Load(csproj);
             return RemoveNs(ns, content);
         }
     }
-
     private static string OuterXml(XDocument xml)
     {
         StringBuilder sb = new StringBuilder();
-
         XmlWriter xml2 = XmlTextWriter.Create(sb);
         xml.Document.WriteTo(xml2);
         return sb.ToString();
     }
-
     /// <summary>
     ///
     /// </summary>
@@ -103,18 +96,15 @@ XDocument.Load(csproj);
         xdoc.LoadXml(xml);
         return xdoc.DocumentElement.InnerXml;
     }
-
     /// <summary>
     ///
     /// </summary>
     public static string ReplaceSpecialHtmlEntity(string vstup)
     {
         vstup = vstup.Replace("&rsquo;", "'");//
-
         vstup = vstup.Replace("&lsquo;", "'"); //¢
         return vstup;
     }
-
     /// <summary>
     ///
     /// </summary>
@@ -125,7 +115,6 @@ XDocument.Load(csproj);
         const string goodAmpersand = "&amp;";
         return badAmpersand.Replace(xml, goodAmpersand);
     }
-
     /// <summary>
     /// Do A2 se vklzda jiz hotove xml, nikoliv soubor.
     /// G posledni dite, to znamena ze pri parsovani celeho dokumentu vraci root.
@@ -137,7 +126,6 @@ XDocument.Load(csproj);
         xdoc.LoadXml(xml);
         return (XmlNode)xdoc.LastChild;
     }
-
     /// <summary>
     /// Vraci FirstChild, pri parsaci celeho dokumentu tak vraci xml deklaraci.
     /// A2 should be entered otherwise can occur error "different XmlDocument context"
@@ -152,16 +140,12 @@ XDocument.Load(csproj);
         {
             xdoc = new XmlDocument();
         }
-
         xdoc.PreserveWhitespace = true;
         xdoc.LoadXml(xml);
-
         //xdoc.Load(soubor);
         return (XmlNode)xdoc.FirstChild;
     }
-
     static Type type = typeof(XH);
-
     /// <summary>
     /// Remove illegal XML characters from a string.
     /// </summary>
@@ -173,7 +157,6 @@ XDocument.Load(csproj);
         }
         //xml = xml.Replace("&", " and ");
         StringBuilder buffer = new StringBuilder(xml.Length);
-
         foreach (char c in xml)
         {
             if (IsLegalXmlChar(c))
@@ -181,21 +164,15 @@ XDocument.Load(csproj);
                 buffer.Append(c);
             }
         }
-
         return buffer.ToString();
     }
-
     public static XmlDocument xd = new XmlDocument();
-
-
-
     /// <summary>
     /// Whether a given character is allowed by XML 1.0.
     /// </summary>
     static bool IsLegalXmlChar(int character)
     {
         return
-
         character == 0x9 /* == '\t' == 9   */          ||
         character == 0xA /* == '\n' == 10  */          ||
         character == 0xD /* == '\r' == 13  */          ||
@@ -204,7 +181,6 @@ XDocument.Load(csproj);
         character >= 0x10000 && character <= 0x10FFFF
         ;
     }
-
     /// <summary>
     /// A1 can be XML or path
     /// </summary>
@@ -225,7 +201,6 @@ XmlDocument
 #endif
             TFSE.ReadAllText(xml);
         }
-
         XmlDocument xd = new XmlDocument();
         try
         {
@@ -238,7 +213,6 @@ XmlDocument
         }
         return xd;
     }
-
     public static string RemoveXmlDeclaration(string vstup)
     {
         vstup = Regex.Replace(vstup, @"<\?xml.*?\?>", "");
@@ -246,6 +220,4 @@ XmlDocument
         vstup = Regex.Replace(vstup, @"<\?xml.*?\/>", "");
         return vstup;
     }
-
-
 }

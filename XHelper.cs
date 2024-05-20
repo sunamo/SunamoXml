@@ -1,14 +1,51 @@
+using System.Xml;
+using System.Xml.Linq;
 
-namespace SunamoXml;
-
-
-
+namespace
+#if SunamoWikipedia
+SunamoWikipedia
+#else
+SunamoXml
+#endif
+;
 /// <summary>
 /// XH = XmlElement
 /// XHelper = XElement
 /// </summary>
 public partial class XHelper
 {
+    public static Dictionary<string, string> XmlNamespaces(XmlNamespaceManager nsmgr, bool withPrexixedXmlnsColon)
+    {
+        Dictionary<string, string> ns = new Dictionary<string, string>();
+        foreach (string item2 in nsmgr)
+        {
+            var item = item2;
+
+            if (withPrexixedXmlnsColon)
+            {
+                if (item == string.Empty || item == Consts.xmlns)
+                {
+                    item = Consts.xmlns;
+                }
+                else
+                {
+                    item = "xmlns:" + item;
+                }
+
+            }
+
+            // Jaký je typ item, at nemusím používat slovník
+            var v = nsmgr.LookupNamespace(item2);
+
+            if (!ns.ContainsKey(item))
+            {
+                ns.Add(item, v);
+            }
+        }
+
+        return ns;
+    }
+
     /// <summary>
     /// If A1 is file, output will be save to file and return null
     /// Otherwise return string
@@ -31,11 +68,8 @@ string
 #endif
             TFSE.ReadAllText(pathOrContent);
         }
-
         XmlNamespacesHolder h = new XmlNamespacesHolder();
         XDocument doc = h.ParseAndRemoveNamespacesXDocument(xmlFormat);
-
-
         var formatted = doc.ToString();
         formatted = formatted.Replace(" xmlns=\"\"", string.Empty);
         //HReplace.ReplaceAll2(formatted, string.Empty, " xmlns=\"\"");
@@ -54,7 +88,6 @@ string
             return formatted;
         }
     }
-
     public static string FormatXmlInMemory(string xml)
     {
         try
@@ -68,21 +101,32 @@ string
             return xml;
         }
     }
-
     public static string GetInnerXml(XElement parent)
     {
         var reader = parent.CreateReader();
         reader.MoveToContent();
         return reader.ReadInnerXml();
     }
-
-
-
     public static List<XElement> GetElementsOfNameWithAttr(System.Xml.Linq.XElement xElement, string tag, string attr, string value, bool caseSensitive)
     {
         return GetElementsOfNameWithAttrWorker(xElement, tag, attr, value, false, caseSensitive);
     }
 
+    public static List<XElement> GetElementsOfNameWithAttrWorker(System.Xml.Linq.XElement xElement, string tag, string attr, string value, bool enoughIsContainsAttribute, bool caseSensitive)
+    {
+        List<XElement> vr = new List<XElement>();
+        List<XElement> e = XHelper.GetElementsOfNameRecursive(xElement, tag);
+        foreach (XElement item in e)
+        {
+            var attrValue = XHelper.Attr(item, attr);
+            if (attrValue.Contains(value) /*SH.ContainsBoolBool(attrValue, value, enoughIsContainsAttribute, caseSensitive)*/)
+            {
+                vr.Add(item);
+            }
+        }
+
+        return vr;
+    }
 
     /// <param name = "item"></param>
     /// <param name = "p"></param>
@@ -111,10 +155,8 @@ string
                 }
             }
         }
-
         return null;
     }
-
     /// <summary>
     /// Is usage only in _Uap/SocialNetworksManager -> open for find out how looks input data and then move to RegexHelper
     /// </summary>
@@ -134,11 +176,9 @@ string
                 xml = xml.Replace(item.Value, deli);
             }
         }
-
         sb.Append(xml);
         return sb.ToString().Replace(deli + deli, deli);
     }
-
     public static string GetXml(XElement node)
     {
         StringWriter sw = new StringWriter();
@@ -146,9 +186,6 @@ string
         node.WriteTo(xtw);
         return sw.ToString();
     }
-
-
-
     public static XElement GetElementOfSecondLevel(XElement var, string first, string second)
     {
         XElement f = var.Element(XName.Get(first));
@@ -157,10 +194,8 @@ string
             XElement s = f.Element(XName.Get(second));
             return s;
         }
-
         return null;
     }
-
     public static string GetValueOfElementOfSecondLevelOrSE(XElement var, string first, string second)
     {
         XElement xe = GetElementOfSecondLevel(var, first, second);
@@ -168,10 +203,8 @@ string
         {
             return xe.Value.Trim();
         }
-
         return "";
     }
-
     /// <param name = "var"></param>
     /// <param name = "p"></param>
     public static string GetValueOfElementOfNameOrSE(XElement var, string nazev)
@@ -181,7 +214,6 @@ string
         {
             return "";
         }
-
         return xe.Value.Trim();
     }
 }

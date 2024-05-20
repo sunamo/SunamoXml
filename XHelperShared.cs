@@ -11,37 +11,7 @@ public partial class XHelper
 {
 
     public static Dictionary<string, string> ns = new Dictionary<string, string>();
-    public static Dictionary<string, string> XmlNamespaces(XmlNamespaceManager nsmgr, bool withPrexixedXmlnsColon)
-    {
-        Dictionary<string, string> ns = new Dictionary<string, string>();
-        foreach (string item2 in nsmgr)
-        {
-            var item = item2;
-
-            if (withPrexixedXmlnsColon)
-            {
-                if (item == string.Empty || item == Consts.xmlns)
-                {
-                    item = Consts.xmlns;
-                }
-                else
-                {
-                    item = "xmlns:" + item;
-                }
-
-            }
-
-            // Jaký je typ item, at nemusím používat slovník
-            var v = nsmgr.LookupNamespace(item2);
-
-            if (!ns.ContainsKey(item))
-            {
-                ns.Add(item, v);
-            }
-        }
-
-        return ns;
-    }
+    
 
     public static string InnerTextOfNode(XElement xe, string v)
     {
@@ -296,21 +266,7 @@ XDocument
         return false;
     }
 
-    public static List<XElement> GetElementsOfNameWithAttrWorker(System.Xml.Linq.XElement xElement, string tag, string attr, string value, bool enoughIsContainsAttribute, bool caseSensitive)
-    {
-        List<XElement> vr = new List<XElement>();
-        List<XElement> e = XHelper.GetElementsOfNameRecursive(xElement, tag);
-        foreach (XElement item in e)
-        {
-            var attrValue = XHelper.Attr(item, attr);
-            if (attrValue.Contains(value) /*SH.ContainsBoolBool(attrValue, value, enoughIsContainsAttribute, caseSensitive)*/)
-            {
-                vr.Add(item);
-            }
-        }
-
-        return vr;
-    }
+    
 
     public static List<XElement> GetElementsOfNameWithAttr(XElement hlavniCL, string v1, string v2, string v3)
     {
