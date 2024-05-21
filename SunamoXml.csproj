@@ -25,5 +25,7 @@
     <Compile Include="..\SunamoExceptions\OnlyInSE\ThrowEx.cs" Link="_linked\SunamoExceptions\OnlyInSE\ThrowEx.cs" />
     <Compile Include="..\SunamoInterfaces\Interfaces\IXmlGenerator.cs" Link="_linked\SunamoInterfaces\Interfaces\IXmlGenerator.cs" />
     <Compile Include="..\SunamoExceptions\InSunamoIsDerivedFrom\TFSE.cs" Link="_linked\SunamoExceptions\InSunamoIsDerivedFrom\TFSE.cs" />
+    <Compile Include="..\SunamoXlfKeys\XlfKeys.cs" Link="_linked\SunamoXlfKeys\XlfKeys.cs" />
+    <Compile Include="..\SunamoCollectionsGeneric\CAGConsts.cs" Link="_linked\SunamoCollectionsGeneric\CAGConsts.cs" />
   </ItemGroup>
 </Project>

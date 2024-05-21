@@ -78,7 +78,7 @@ public static partial class XmlHelper
             var el = childNodes.First(d => d.Name == v);
             return el?.Value;
         }
-        Debugger.Break();
+        System.Diagnostics.Debugger.Break();
         return null;
     }
 

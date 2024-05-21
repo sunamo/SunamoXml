@@ -1,6 +1,8 @@
 namespace
 #if SunamoWikipedia
 SunamoWikipedia
+#elif SunamoHtml
+SunamoHtml
 #else
 SunamoXml
 #endif

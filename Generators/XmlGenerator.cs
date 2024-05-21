@@ -1,8 +1,10 @@
-using System.Xml;
 
+using System.Xml;
 namespace
 #if SunamoWikipedia
 SunamoWikipedia
+#elif SunamoHtml
+SunamoHtml
 #else
 SunamoXml
 #endif
@@ -13,7 +15,7 @@ SunamoXml
 /// Element - prvek kterému se zapisují ihned i innerObsah. Může být i prázdný.
 /// Tag - prvek kterému to mohu zapsat později nebo vůbec.
 /// </summary>
-public class XmlGenerator : IXmlGenerator
+public class XmlGenerator //: IXmlGenerator
 {
     static Type type = typeof(XmlGenerator);
     public StringBuilder sb = new StringBuilder();
