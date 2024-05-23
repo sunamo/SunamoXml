@@ -1,9 +1,9 @@
 namespace SunamoXml;
 
 
-internal class CAGConsts
+public class CAGConsts
 {
-    internal static T[] ToArrayT<T>(params T[] aB)
+    public static T[] ToArrayT<T>(params T[] aB)
     {
         return aB;
     }
@@ -14,7 +14,7 @@ internal class CAGConsts
     /// <typeparam name="T"></typeparam>
     /// <param name="t"></param>
     /// <returns></returns>
-    internal static List<T> ToList<T>(params T[] t)
+    public static List<T> ToList<T>(params T[] t)
     {
         return t.ToList();
     }

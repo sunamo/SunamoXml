@@ -1,9 +1,9 @@
 namespace SunamoXml;
 
 
-internal class SHReplace
+public class SHReplace
 {
-    internal static string ReplaceAllDoubleSpaceToSingle(string text, bool alsoHtml = false)
+    public static string ReplaceAllDoubleSpaceToSingle(string text, bool alsoHtml = false)
     {
         //text = SHSH.FromSpace160To32(text);
 
@@ -34,7 +34,7 @@ internal class SHReplace
     }
 
 
-    internal static string ReplaceAllWhitecharsForSpace(string c)
+    public static string ReplaceAllWhitecharsForSpace(string c)
     {
         foreach (var item in AllChars.whiteSpacesChars)
         {
