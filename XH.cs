@@ -1,12 +1,5 @@
 using System.Xml.Linq;
 
-namespace
-#if SunamoWikipedia
-SunamoWikipedia
-#else
-SunamoXml
-#endif
-;
 /// <summary>
 /// XH = XmlElement
 /// XHelper = XElement

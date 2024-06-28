@@ -1,13 +1,6 @@
 using System.Xml;
 using System.Xml.Linq;
 
-namespace
-#if SunamoWikipedia
-SunamoWikipedia
-#else
-SunamoXml
-#endif
-;
 /// <summary>
 /// XH = XmlElement
 /// XHelper = XElement
@@ -34,7 +27,7 @@ public partial class XHelper
 
             }
 
-            // Jaký je typ item, at nemusím používat slovník
+            // Jakï¿½ je typ item, at nemusï¿½m pouï¿½ï¿½vat slovnï¿½k
             var v = nsmgr.LookupNamespace(item2);
 
             if (!ns.ContainsKey(item))

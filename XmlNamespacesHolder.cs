@@ -1,13 +1,6 @@
 using System.Xml;
 using System.Xml.Linq;
 
-namespace
-#if SunamoWikipedia
-SunamoWikipedia
-#else
-SunamoXml
-#endif
-;
 public class XmlNamespacesHolder
 {
     //public NameTable nt = new NameTable();
