@@ -1,12 +1,3 @@
-namespace
-#if SunamoWikipedia
-SunamoWikipedia
-#elif SunamoHtml
-SunamoHtml
-#else
-SunamoXml
-#endif
-;
 /// <summary>
 /// Summary description for XmlTemplates
 /// </summary>

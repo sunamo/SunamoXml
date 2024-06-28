@@ -1,14 +1,5 @@
 
 using System.Xml;
-namespace
-#if SunamoWikipedia
-SunamoWikipedia
-#elif SunamoHtml
-SunamoHtml
-#else
-SunamoXml
-#endif
-;
 /// <summary>
 /// Našel jsem ještě třídu DotXml ale ta umožňuje vytvářet jen dokumenty ke bude root ThisApp.Name
 /// A nebo moje vlastní XML třídy, ale ty umí vytvářet jen třídy bez rozsáhlejšího xml vnoření.

@@ -1,12 +1,3 @@
-namespace
-#if SunamoWikipedia
-SunamoWikipedia
-#elif SunamoHtml
-SunamoHtml
-#else
-SunamoXml
-#endif
-;
 public class XmlGeneratorSelective : XmlGenerator
 {
     /// <summary>
