@@ -1,9 +1,9 @@
 namespace SunamoXml;
 
-public static partial class XmlNodeListExtensions
+internal static partial class XmlNodeListExtensions
 {
     #region For easy copy from XmlNodeListExtensions.cs
-    public static bool Contains(this XmlNodeList e, XmlNode n)
+    internal static bool Contains(this XmlNodeList e, XmlNode n)
     {
         foreach (var item in e)
         {
@@ -15,7 +15,7 @@ public static partial class XmlNodeListExtensions
         return false;
     }
 
-    public static XmlNode First(this XmlNodeList e, string n)
+    internal static XmlNode First(this XmlNodeList e, string n)
     {
         foreach (XmlNode item in e)
         {
@@ -27,7 +27,7 @@ public static partial class XmlNodeListExtensions
         return null;
     }
 
-    public static List<XmlNode> WithName(this XmlNodeList e, string n)
+    internal static List<XmlNode> WithName(this XmlNodeList e, string n)
     {
         List<XmlNode> result = new List<XmlNode>();
         foreach (XmlNode item in e)
