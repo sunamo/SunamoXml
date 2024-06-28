@@ -1,3 +1,5 @@
+
+namespace SunamoXml;
 using System.Xml.Linq;
 
 /// <summary>

@@ -1,3 +1,5 @@
+
+namespace SunamoXml;
 /// <summary>
 /// Summary description for XmlTemplates
 /// </summary>

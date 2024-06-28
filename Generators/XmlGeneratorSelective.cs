@@ -1,3 +1,5 @@
+
+namespace SunamoXml;
 public class XmlGeneratorSelective : XmlGenerator
 {
     /// <summary>
