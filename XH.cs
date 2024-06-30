@@ -6,7 +6,7 @@ using System.Xml.Linq;
 /// XH = XmlElement
 /// XHelper = XElement
 /// </summary>
-public partial class XH
+public class XH
 {
     public static void RemoveFirstElement(string xml, string elem)
     {
