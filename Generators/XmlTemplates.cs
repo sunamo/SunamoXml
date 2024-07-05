@@ -1,4 +1,3 @@
-
 namespace SunamoXml.Generators;
 /// <summary>
 /// Summary description for XmlTemplates

@@ -1,7 +1,4 @@
-
 namespace SunamoXml;
-using System.Xml;
-using System.Xml.Linq;
 
 public class XHelper
 {

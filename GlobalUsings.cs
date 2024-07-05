@@ -27,3 +27,4 @@ global using SunamoXml._sunamo.SunamoExceptions.InSunamoIsDerivedFrom;
 global using SunamoXml._sunamo.SunamoExceptions.OnlyInSE;
 global using SunamoXml._sunamo.SunamoExceptions._AddedToAllCsproj;
 global using SunamoXml._sunamo.SunamoInterfaces.Interfaces;
+global using System.Net;

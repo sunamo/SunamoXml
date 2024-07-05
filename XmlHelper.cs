@@ -1,4 +1,3 @@
-
 namespace SunamoXml;
 
 public static class XmlHelper
