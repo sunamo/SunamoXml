@@ -2,9 +2,6 @@ global using System.Collections.Generic;
 global using System;
 global using System.Linq;
 global using System.Text;
-
-
-
 global using System.IO;
 global using System.Threading.Tasks;
 global using System.Diagnostics;
@@ -14,6 +11,19 @@ global using System.Xml.Linq;
 global using System.Collections.Immutable;
 global using System.Collections.Generic;
 global using System.Collections;
-
 global using System.Diagnostics.CodeAnalysis;
 global using System.Reflection;
+global using SunamoXml;
+global using SunamoXml.Generators;
+global using SunamoXml._sunamo.SunamoCollectionsGeneric;
+global using SunamoXml._sunamo.SunamoDictionary;
+global using SunamoXml._sunamo.SunamoExtensions;
+global using SunamoXml._sunamo.SunamoString;
+global using SunamoXml._sunamo.SunamoStringGetLines;
+global using SunamoXml._sunamo.SunamoStringReplace;
+global using SunamoXml._sunamo.SunamoValues;
+global using SunamoXml._sunamo.SunamoXlfKeys;
+global using SunamoXml._sunamo.SunamoExceptions.InSunamoIsDerivedFrom;
+global using SunamoXml._sunamo.SunamoExceptions.OnlyInSE;
+global using SunamoXml._sunamo.SunamoExceptions._AddedToAllCsproj;
+global using SunamoXml._sunamo.SunamoInterfaces.Interfaces;

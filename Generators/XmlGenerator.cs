@@ -1,4 +1,4 @@
-namespace SunamoXml;
+namespace SunamoXml.Generators;
 
 using System.Xml;
 /// <summary>

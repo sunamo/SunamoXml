@@ -1,4 +1,4 @@
-namespace SunamoXml;
+namespace SunamoXml._sunamo.SunamoString;
 
 //namespace SunamoXml;
 

@@ -1,5 +1,5 @@
 
-namespace SunamoXml;
+namespace SunamoXml.Generators;
 /// <summary>
 /// Summary description for XmlTemplates
 /// </summary>

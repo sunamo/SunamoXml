@@ -1,4 +1,4 @@
-namespace SunamoXml;
+namespace SunamoXml._sunamo.SunamoExtensions;
 
 internal static class XmlNodeListExtensions
 {

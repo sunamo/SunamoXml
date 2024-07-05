@@ -1,4 +1,4 @@
-namespace SunamoXml;
+namespace SunamoXml._sunamo.SunamoStringGetLines;
 internal class SHGetLines
 {
     internal static List<string> GetLines(string p)
