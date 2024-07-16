@@ -275,6 +275,7 @@ XDocument
             p = XHelper.ns[p];
             foreach (XElement item in node.DescendantsAndSelf())
             {
+
                 if (item.Name.LocalName == z && item.Name.NamespaceName == p)
                 {
                     vr.Add(item);
@@ -356,7 +357,7 @@ string
 #if ASYNC
                 await
 #endif
-                    TFSE.ReadAllText(pathOrContent);
+                    File.ReadAllTextAsync(pathOrContent);
         }
         XmlNamespacesHolder h = new XmlNamespacesHolder();
         XDocument doc = h.ParseAndRemoveNamespacesXDocument(xmlFormat);
@@ -368,7 +369,7 @@ string
 #if ASYNC
             await
 #endif
-                TFSE.WriteAllText(pathOrContent, formatted);
+                File.WriteAllTextAsync(pathOrContent, formatted);
             //ThisApp.Success(sess.i18n(XlfKeys.ChangesSavedToFile));
             return null;
         }

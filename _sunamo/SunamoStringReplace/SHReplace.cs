@@ -1,11 +1,10 @@
 namespace SunamoXml._sunamo.SunamoStringReplace;
 
-
 internal class SHReplace
 {
     internal static string ReplaceAllDoubleSpaceToSingle(string text, bool alsoHtml = false)
     {
-        //text = SHSH.FromSpace160To32(text);
+        //text = SH.FromSpace160To32(text);
 
         if (alsoHtml)
         {

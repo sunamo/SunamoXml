@@ -37,12 +37,12 @@ XDocument.Load(csproj);
 #if ASYNC
             await
 #endif
-            TFSE.ReadAllText(csproj);
+            TF.ReadAllText(csproj);
             text = RemoveNs(ns, text);
 #if ASYNC
             await
 #endif
-            TFSE.WriteAllText(csproj, text);
+            TF.WriteAllText(csproj, text);
         }
     }
     private static void AddNs(XNamespace ns, XDocument xml)
@@ -192,7 +192,7 @@ XmlDocument
 #if ASYNC
             await
 #endif
-            TFSE.ReadAllText(xml);
+            TF.ReadAllText(xml);
         }
         XmlDocument xd = new XmlDocument();
         try
