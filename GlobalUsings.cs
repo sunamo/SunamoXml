@@ -20,3 +20,4 @@ global using SunamoXml._sunamo.SunamoValues;
 global using SunamoXml._sunamo.SunamoExceptions.InSunamoIsDerivedFrom;
 global using SunamoXml._sunamo.SunamoExceptions.OnlyInSE;
 global using System.Net;
+global using SunamoXml._sunamo.SunamoString;
