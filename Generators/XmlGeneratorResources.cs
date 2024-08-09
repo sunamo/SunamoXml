@@ -2,7 +2,7 @@ namespace SunamoXml.Generators;
 
 public class XmlGeneratorResources
 {
-    private XmlGenerator _xml = new XmlGenerator();
+    private readonly XmlGenerator _xml = new();
 
     public void AddText(string name, string text)
     {

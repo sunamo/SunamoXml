@@ -14,9 +14,7 @@ internal class SHReplace
         }
 
         while (text.Contains(AllStrings.doubleSpace))
-        {
-            text = text.Replace(AllStrings.doubleSpace, AllStrings.space);// ReplaceAll2(text, AllStrings.space, );
-        }
+            text = text.Replace(AllStrings.doubleSpace, AllStrings.space); // ReplaceAll2(text, AllStrings.space, );
 
         // Here it was cycling, dont know why, therefore without while
         //while (text.Contains(AllStrings.doubleSpace16032))
@@ -36,12 +34,8 @@ internal class SHReplace
     internal static string ReplaceAllWhitecharsForSpace(string c)
     {
         foreach (var item in AllChars.whiteSpacesChars)
-        {
             if (item != AllChars.space)
-            {
                 c = c.Replace(item, AllChars.space);
-            }
-        }
 
         return c;
     }

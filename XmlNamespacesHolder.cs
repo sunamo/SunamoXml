@@ -3,29 +3,31 @@ namespace SunamoXml;
 public class XmlNamespacesHolder
 {
     //public NameTable nt = new NameTable();
-    public XmlNamespaceManager nsmgr = null;
+    public XmlNamespaceManager nsmgr;
+
     /// <summary>
-    /// Return XmlDocument but dont use return value
-    /// Just use XHelper class, because with XmlDocument is still not working
+    ///     Return XmlDocument but dont use return value
+    ///     Just use XHelper class, because with XmlDocument is still not working
     /// </summary>
     /// <param name="content"></param>
     public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content)
     {
-        XmlDocument xd = new XmlDocument();
+        var xd = new XmlDocument();
         xd = ParseAndRemoveNamespacesXmlDocument(content, xd.NameTable);
         return xd;
     }
+
     /// <summary>
-    /// A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
-    /// Return XmlDocument but dont use return value
-    /// Just use XHelper class, because with XmlDocument is still not working
+    ///     A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
+    ///     Return XmlDocument but dont use return value
+    ///     Just use XHelper class, because with XmlDocument is still not working
     /// </summary>
     /// <param name="content"></param>
     /// <param name="nt"></param>
     /// <param name="defaultPrefix"></param>
     public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content, XmlNameTable nt, string defaultPrefix = "x")
     {
-        XmlDocument xd = new XmlDocument();
+        var xd = new XmlDocument();
         /*
         * In default state have already three keys:
         * "" = ""
@@ -36,34 +38,30 @@ public class XmlNamespacesHolder
         xd.LoadXml(content);
         foreach (XmlNode item in xd.ChildNodes)
         {
-            if (item.NodeType == XmlNodeType.XmlDeclaration)
-            {
-                continue;
-            }
+            if (item.NodeType == XmlNodeType.XmlDeclaration) continue;
             var root = item;
-            for (int i = root.Attributes.Count - 1; i >= 0; i--)
+            for (var i = root.Attributes.Count - 1; i >= 0; i--)
             {
                 var att = root.Attributes[i];
                 //
-                string key = defaultPrefix;
+                var key = defaultPrefix;
                 if (att.Name.StartsWith(Consts.xmlns))
                 {
-                    if (att.Name.Contains(":"))
-                    {
-                        key = att.Name.Substring(6);
-                    }
+                    if (att.Name.Contains(":")) key = att.Name.Substring(6);
                     nsmgr.AddNamespace(key, att.Value);
                     // TODO: Delete wrong attribute but in outerXml is still figuring
                     root.Attributes.RemoveAt(i);
                 }
             }
         }
+
         var outer = xd.OuterXml;
         return xd;
     }
+
     /// <summary>
-    /// Return XmlDocument but dont use return value
-    /// Just use XHelper class, because with XmlDocument is still not working
+    ///     Return XmlDocument but dont use return value
+    ///     Just use XHelper class, because with XmlDocument is still not working
     /// </summary>
     /// <param name="content"></param>
     public XDocument ParseAndRemoveNamespacesXDocument(string content)
@@ -71,10 +69,11 @@ public class XmlNamespacesHolder
         var xd = ParseAndRemoveNamespacesXmlDocument(content);
         return XDocument.Parse(xd.OuterXml);
     }
+
     /// <summary>
-    /// A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
-    /// Return XmlDocument but dont use return value
-    /// Just use XHelper class, because with XmlDocument is still not working
+    ///     A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
+    ///     Return XmlDocument but dont use return value
+    ///     Just use XHelper class, because with XmlDocument is still not working
     /// </summary>
     /// <param name="content"></param>
     /// <param name="nt"></param>

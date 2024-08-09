@@ -1,15 +1,15 @@
 namespace SunamoXml.Generators;
 
 /// <summary>
-/// Nasel jsem jeste tridu DotXml ale ta umoznuje vytvaret jen dokumenty ke bude root ThisApp.Name
-/// A nebo moje vlastni XML tridy, ale ty umi vytvaret jen tridy bez rozsahlejesho xml vnoreni.
-/// Element - prvek kteremu se zapisuje ihned i innerObsah. Muze byt i prazdne.
-/// Tag - prvek kteremu to mohu zapsat pozdeji nebo vubec.
+///     Nasel jsem jeste tridu DotXml ale ta umoznuje vytvaret jen dokumenty ke bude root ThisApp.Name
+///     A nebo moje vlastni XML tridy, ale ty umi vytvaret jen tridy bez rozsahlejesho xml vnoreni.
+///     Element - prvek kteremu se zapisuje ihned i innerObsah. Muze byt i prazdne.
+///     Tag - prvek kteremu to mohu zapsat pozdeji nebo vubec.
 /// </summary>
 public class XmlGeneratorNS2
 {
-    protected StringBuilder sb = new StringBuilder();
-    private string _ns = null;
+    private readonly string _ns;
+    protected StringBuilder sb = new();
 
     /// <param name="ns"></param>
     public XmlGeneratorNS2(string ns)
@@ -24,10 +24,7 @@ public class XmlGeneratorNS2
 
     public void WriteElementObject(string p, object o)
     {
-        if (o != null)
-        {
-            WriteElement(p, o.ToString());
-        }
+        if (o != null) WriteElement(p, o.ToString());
     }
 
     public void WriteTagWithAttr(string tag, string atribut, string hodnota)
@@ -56,17 +53,14 @@ public class XmlGeneratorNS2
     }
 
     /// <summary>
-    /// NI
+    ///     NI
     /// </summary>
     /// <param name="p"></param>
     /// <param name="p_2"></param>
     public void WriteTagWithAttrs(string p, params string[] p_2)
     {
         sb.AppendFormat(AllStrings.lt + _ns + "{0} ", p);
-        for (int i = 0; i < p_2.Length; i++)
-        {
-            sb.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
-        }
+        for (var i = 0; i < p_2.Length; i++) sb.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
         sb.Append(AllStrings.gt);
     }
 
@@ -93,15 +87,11 @@ public class XmlGeneratorNS2
 
     public static string WriteSimpleTagS(string ns, string tag, params string[] p)
     {
-        XmlGeneratorNS2 x = new XmlGeneratorNS2(ns);
+        var x = new XmlGeneratorNS2(ns);
         if (p.Length == 0)
-        {
             x.WriteSimpleTag(tag);
-        }
         else
-        {
             x.WriteSimpleTag(tag, p);
-        }
         return x.ToString();
     }
 
@@ -113,10 +103,7 @@ public class XmlGeneratorNS2
     public void WriteSimpleTag(string tag, params string[] p_2)
     {
         sb.AppendFormat(AllStrings.lt + _ns + "{0} ", tag);
-        for (int i = 0; i < p_2.Length; i++)
-        {
-            sb.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
-        }
+        for (var i = 0; i < p_2.Length; i++) sb.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
         sb.Append(" />");
     }
 }

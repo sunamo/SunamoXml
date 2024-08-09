@@ -1,6 +1,5 @@
 namespace SunamoXml._sunamo.SunamoInterfaces.Interfaces;
 
-
 internal interface IXmlGenerator
 {
     void AppendLine();
