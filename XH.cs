@@ -41,12 +41,12 @@ XDocument.Load(csproj);
 #if ASYNC
                 await
 #endif
-                    TF.ReadAllText(csproj);
+                    File.ReadAllTextAsync(csproj);
             text = RemoveNs(ns, text);
 #if ASYNC
             await
 #endif
-                TF.WriteAllText(csproj, text);
+                File.WriteAllTextAsync(csproj, text);
         }
     }
 
@@ -187,7 +187,7 @@ XmlDocument
 #if ASYNC
                 await
 #endif
-                    TF.ReadAllText(xml);
+                    File.ReadAllTextAsync(xml);
         var xd = new XmlDocument();
         try
         {
