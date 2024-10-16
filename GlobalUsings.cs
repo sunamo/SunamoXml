@@ -13,7 +13,7 @@ global using System.Collections;
 global using SunamoXml._sunamo.SunamoDictionary;
 global using SunamoXml._sunamo.SunamoExtensions;
 global using SunamoXml._sunamo.SunamoStringReplace;
-global using SunamoXml._sunamo.SunamoValues;
+global using SunamoXml;
 global using SunamoXml._sunamo.SunamoExceptions;
 global using SunamoXml._sunamo.SunamoString;
 global using System.Diagnostics.CodeAnalysis;

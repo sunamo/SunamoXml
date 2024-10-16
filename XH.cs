@@ -53,7 +53,7 @@ XDocument.Load(csproj);
     private static void AddNs(XNamespace ns, XDocument xml)
     {
         foreach (var element in xml.Descendants().ToList()) element.Name = ns + element.Name.LocalName;
-        xml.Root.SetAttributeValue(Consts.xmlns, ns.ToString());
+        xml.Root.SetAttributeValue("xmlns", ns.ToString());
     }
 
     private static string RemoveNs(XNamespace ns, string text)

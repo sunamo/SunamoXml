@@ -1,5 +1,6 @@
 namespace SunamoXml._sunamo.SunamoStringReplace;
 
+
 internal class SHReplace
 {
     internal static string ReplaceAllDoubleSpaceToSingle(string text, bool alsoHtml = false)
@@ -13,18 +14,18 @@ internal class SHReplace
             text = text.Replace("&nbsp;", " ");
         }
 
-        while (text.Contains(AllStrings.doubleSpace))
-            text = text.Replace(AllStrings.doubleSpace, AllStrings.space); // ReplaceAll2(text, AllStrings.space, );
+        while (text.Contains(""))
+            text = text.Replace("", ""); // ReplaceAll2(text, "", );
 
         // Here it was cycling, dont know why, therefore without while
-        //while (text.Contains(AllStrings.doubleSpace16032))
+        //while (text.Contains("space160 + space"))
         //{
-        //text = ReplaceAll2(text, AllStrings.space, AllStrings.doubleSpace16032);
+        //text = ReplaceAll2(text, "", "space160 + space");
         //}
 
-        //while (text.Contains(AllStrings.doubleSpace32160))
+        //while (text.Contains("space + space160"))
         //{
-        //text = ReplaceAll2(text, AllStrings.space, AllStrings.doubleSpace32160);
+        //text = ReplaceAll2(text, "", "space + space160");
         //}
 
         return text;
@@ -33,9 +34,10 @@ internal class SHReplace
 
     internal static string ReplaceAllWhitecharsForSpace(string c)
     {
-        foreach (var item in AllChars.whiteSpacesChars)
-            if (item != AllChars.space)
-                c = c.Replace(item, AllChars.space);
+        WhitespaceCharService whitespaceChar = new();
+        foreach (var item in whitespaceChar.whiteSpaceChars)
+            if (item != ' ')
+                c = c.Replace(item, ' ');
 
         return c;
     }

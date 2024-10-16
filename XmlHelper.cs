@@ -29,7 +29,7 @@ public static class XmlHelper
     /// <param name="xmlContent"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static string FormatXmlInMemory(string xmlContent, string path = Consts.se)
+    public static string FormatXmlInMemory(string xmlContent, string path = "")
     {
         MemoryStream mStream = new();
         XmlTextWriter writer = new(mStream, Encoding.Unicode);
@@ -67,7 +67,7 @@ public static class XmlHelper
             var nl = Environment.NewLine;
 
 
-            return Consts.Exception + path + nl + nl + ex.Message;
+            return "Exception:" + path + nl + nl + ex.Message;
             //ThrowEx.CustomWithStackTrace(ex);
         }
 
@@ -192,8 +192,8 @@ public static class XmlHelper
 
         if (newRoot.Attributes.Count == 0)
         {
-            var xa = docNew.CreateAttribute(Consts.xmlns);
-            xa.Value = Consts.Schema;
+            var xa = docNew.CreateAttribute("xmlns");
+            xa.Value = "http://";
             newRoot.Attributes.Append(xa);
         }
 
@@ -221,7 +221,7 @@ public static class XmlHelper
         //    //newRoot.Attributes.Append();
         //}
 
-        //var x2 = XmlHelper.Attr(newRoot, Consts.xmlns);
+        //var x2 = XmlHelper.Attr(newRoot, "xmlns");
         //if (x2 == dummyXmlns)
         //{
         //    newRoot.Attributes.Remove(XmlHelper.foundedNode);

@@ -45,7 +45,7 @@ public class XmlNamespacesHolder
                 var att = root.Attributes[i];
                 //
                 var key = defaultPrefix;
-                if (att.Name.StartsWith(Consts.xmlns))
+                if (att.Name.StartsWith("xmlns"))
                 {
                     if (att.Name.Contains(":")) key = att.Name.Substring(6);
                     nsmgr.AddNamespace(key, att.Value);

@@ -28,9 +28,9 @@ public class XHelper
 
     public static XElement GetElementOfNameWithAttr(XElement node, string nazev, string attr, string value)
     {
-        if (nazev.Contains(AllStrings.colon))
+        if (nazev.Contains(":"))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
             p = ns[p];
             foreach (var item in node.Elements())
                 if (item.Name.LocalName == z && item.Name.NamespaceName == p)
@@ -71,7 +71,7 @@ public class XHelper
     public static List<XElement> GetElementsOfName(XElement node, string nazev)
     {
         var result = new List<XElement>();
-        if (nazev.Contains(AllStrings.colon))
+        if (nazev.Contains(":"))
         {
             foreach (var item in node.Elements())
                 if (IsRightTag(item, nazev))
@@ -107,7 +107,7 @@ public class XHelper
     public static void AddXmlNamespaces(params string[] p)
     {
         for (var i = 0; i < p.Length; i++)
-            //.TrimEnd(AllChars.slash) + AllStrings.slash
+            //.TrimEnd('/') + "/"
             ns.Add(p[i].Replace("xmlns:", ""), p[++i]);
     }
 
@@ -150,9 +150,9 @@ XDocument
     /// <param name="nazev"></param>
     public static XElement GetElementOfName(XContainer node, string nazev)
     {
-        if (nazev.Contains(AllStrings.colon))
+        if (nazev.Contains(":"))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
             p = ns[p];
             foreach (var item in node.Elements())
             {
@@ -185,7 +185,7 @@ XDocument
     /// <param name="nazev"></param>
     public static bool IsRightTag(XName xName, string nazev)
     {
-        var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+        var (p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
         p = ns[p];
         if (xName.LocalName == z && xName.NamespaceName == p) return true;
 
@@ -220,9 +220,9 @@ XDocument
     {
         var vr = new List<XElement>();
 
-        if (nazev.Contains(AllStrings.colon))
+        if (nazev.Contains(":"))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
             p = ns[p];
             foreach (var item in node.DescendantsAndSelf())
                 if (item.Name.LocalName == z && item.Name.NamespaceName == p)
@@ -256,8 +256,8 @@ XDocument
 
             if (withPrexixedXmlnsColon)
             {
-                if (item == string.Empty || item == Consts.xmlns)
-                    item = Consts.xmlns;
+                if (item == string.Empty || item == "xmlns")
+                    item = "xmlns";
                 else
                     item = "xmlns:" + item;
             }
@@ -358,9 +358,9 @@ string
     public static XElement GetElementOfNameRecursive(XElement node, string nazev)
     {
         //bool ns = true;
-        if (nazev.Contains(AllStrings.colon))
+        if (nazev.Contains(":"))
         {
-            var (p, z) = SH.GetPartsByLocationNoOut(nazev, AllChars.colon);
+            var (p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
             p = ns[p];
             foreach (var item in node.DescendantsAndSelf())
                 if (item.Name.LocalName == z && item.Name.NamespaceName == p)
