@@ -207,7 +207,7 @@ public static class XmlHelper
         var docNew = new XmlDocument();
         var newRoot = docNew.CreateElement(newRootElementName);
 
-        if (!ThrowEx.IsOdd("attrs", attrs)) return;
+        if (!ThrowEx.HasOddNumberOfElements("attrs", attrs)) return;
         var addedAny = false;
         //for (int i = 0; i < attrs.Length; i++)
         //{
