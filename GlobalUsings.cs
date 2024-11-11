@@ -18,3 +18,8 @@ global using SunamoXml._sunamo.SunamoString;
 global using System.Reflection;
 global using System.Net;
 global using System.Diagnostics.CodeAnalysis;
+global using SunamoXml;
+global using SunamoXml.Generators;
+global using SunamoXml._sunamo;
+global using SunamoXml._sunamo.SunamoCollectionsGeneric;
+global using SunamoXml._sunamo.SunamoInterfaces.Interfaces;
