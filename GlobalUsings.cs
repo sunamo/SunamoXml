@@ -23,3 +23,7 @@ global using SunamoXml.Generators;
 global using SunamoXml._sunamo;
 global using SunamoXml._sunamo.SunamoCollectionsGeneric;
 global using SunamoXml._sunamo.SunamoInterfaces.Interfaces;
+
+global using ILogger = Microsoft.Extensions.Logging.ILogger;
+global using Microsoft.Extensions.Logging;
+global using NullLogger = Microsoft.Extensions.Logging.Abstractions.NullLogger;
