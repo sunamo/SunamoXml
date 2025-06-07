@@ -234,14 +234,11 @@ public static class XmlHelper
         x = docNew;
     }
 
-    public static string InnerTextOfNode(XmlNode xe, string version2)
+    public static string InnerTextOfNode(XmlNode xe)
     {
         return xe.InnerText;
     }
 
-    public static void AddXmlNamespaces(XmlNamespaceManager nsmgr)
-    {
-    }
 
     public static XmlDocument CreateXmlDocument(string content)
     {

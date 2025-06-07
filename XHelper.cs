@@ -88,9 +88,9 @@ public class XHelper
     }
 
     public static IList<XElement> GetElementsOfNameWithAttrContains(XElement group, string tag, string attr,
-        string value, bool caseSensitive = false)
+        string value/*, bool caseSensitive = false*/)
     {
-        return GetElementsOfNameWithAttrWorker(group, tag, attr, value, true, caseSensitive);
+        return GetElementsOfNameWithAttrWorker(group, tag, attr, value/*, true, caseSensitive*/);
     }
 
     public static void AddXmlNamespaces(XmlNamespaceManager nsmgr)
@@ -211,10 +211,6 @@ XDocument
     }
 
 
-    public static List<XElement> GetElementsOfNameWithAttr(XElement hlavniCL, string v1, string v2, string v3)
-    {
-        return null;
-    }
 
     public static List<XElement> GetElementsOfNameRecursive(XElement node, string nazev)
     {
@@ -331,14 +327,14 @@ string
         return reader.ReadInnerXml();
     }
 
-    public static List<XElement> GetElementsOfNameWithAttr(XElement xElement, string tag, string attr, string value,
-        bool caseSensitive)
+    public static List<XElement> GetElementsOfNameWithAttr(XElement xElement, string tag, string attr, string value/*,
+        bool caseSensitive*/)
     {
-        return GetElementsOfNameWithAttrWorker(xElement, tag, attr, value, false, caseSensitive);
+        return GetElementsOfNameWithAttrWorker(xElement, tag, attr, value/*, false, caseSensitive*/);
     }
 
     public static List<XElement> GetElementsOfNameWithAttrWorker(XElement xElement, string tag, string attr,
-        string value, bool enoughIsContainsAttribute, bool caseSensitive)
+        string value/*, bool enoughIsContainsAttribute, bool caseSensitive*/)
     {
         var vr = new List<XElement>();
         var e = GetElementsOfNameRecursive(xElement, tag);
