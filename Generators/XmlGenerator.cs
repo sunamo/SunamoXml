@@ -148,11 +148,6 @@ public class XmlGenerator //: IXmlGenerator
         WriteTagWithAttrs(false, p, p_2);
     }
 
-    public void WriteTagNamespaceManager(object rss, XmlNamespaceManager nsmgr, string v1, string v2)
-    {
-        ThrowEx.NotImplementedMethod();
-    }
-
     private bool IsNulledOrEmpty(string s)
     {
         if (string.IsNullOrEmpty(s) || s == "(null)") return true;

@@ -9,11 +9,11 @@ public class XH
     private static Type type = typeof(XH);
     public static XmlDocument xd = new();
 
-    public static void RemoveFirstElement(string xml, string elem)
-    {
-        var xd = XDocument.Parse(xml);
-        //xd.Descendants("")
-    }
+    //public static void RemoveFirstElement(string xml, string elem)
+    //{
+    //    var xd = XDocument.Parse(xml);
+    //    //xd.Descendants("")
+    //}
 
     public static
 #if ASYNC
@@ -130,7 +130,7 @@ XDocument.Load(csproj);
     /// </summary>
     /// <param name="soubor"></param>
     /// <param name="xnm"></param>
-    public static XmlNode ReturnXmlNode(string xml, XmlDocument xdoc2 = null)
+    public static XmlNode ReturnXmlNode(string xml)
     {
         XmlDocument xdoc = null;
         //XmlTextReader xtr = new XmlTextReader(
