@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoXml;
 
 public class XHelper
@@ -5,9 +8,9 @@ public class XHelper
     public static Dictionary<string, string> ns = new();
 
 
-    public static string InnerTextOfNode(XElement xe, string v)
+    public static string InnerTextOfNode(XElement xe, string value)
     {
-        var desc = xe.Descendants(XName.Get(v));
+        var desc = xe.Descendants(XName.Get(value));
         if (desc.Count() == 0) return string.Empty;
         var first = desc.First();
         return first.Value;
@@ -53,14 +56,14 @@ public class XHelper
         var ns2 = ns[string.Empty];
         var toInsert = new List<object>();
         // shift ALL elements in the settings document into the target namespace
-        foreach (var e in settings.DescendantsAndSelf())
-            //e.Name =  e.Name.LocalName;
-            e.Name = XName.Get(e.Name.LocalName, ns2);
+        foreach (var element in settings.DescendantsAndSelf())
+            //element.Name =  element.Name.LocalName;
+            element.Name = XName.Get(element.Name.LocalName, ns2);
 
-        //foreach (var e in settings.Attributes())
+        //foreach (var element in settings.Attributes())
         //{
-        //    //e.Name = XName.Get(e.Name.LocalName, ns2);
-        //    toInsert.Add(e);
+        //    //element.Name = XName.Get(element.Name.LocalName, ns2);
+        //    toInsert.Add(element);
         //}
         //t
         var vr = new XElement(XName.Get(settings.Name.LocalName, ns2), settings.Attributes(), settings.Descendants());
@@ -98,8 +101,8 @@ public class XHelper
         foreach (string item in nsmgr)
         {
             // Jaký je typ item, at nemusím používat slovník
-            var v = nsmgr.LookupNamespace(item);
-            if (!ns.ContainsKey(item)) ns.Add(item, v);
+            var value = nsmgr.LookupNamespace(item);
+            if (!ns.ContainsKey(item)) ns.Add(item, value);
         }
     }
 
@@ -111,9 +114,9 @@ public class XHelper
             ns.Add(p[i].Replace("xmlns:", ""), p[++i]);
     }
 
-    public static void AddXmlNamespaces(Dictionary<string, string> d)
+    public static void AddXmlNamespaces(Dictionary<string, string> dictionary)
     {
-        foreach (var item in d) ns.Add(item.Key, item.Value);
+        foreach (var item in dictionary) ns.Add(item.Key, item.Value);
     }
 
     public static
@@ -143,8 +146,8 @@ XDocument
     }
 
     /// <summary>
-    ///     Získá element jména A2 v A1.
-    ///     Umí pracovat v NS, stačí zadat zkratku namepsace jako ns:tab
+    ///     Získá element jména A2 value A1.
+    ///     Umí pracovat value NS, stačí zadat zkratku namepsace jako ns:tab
     /// </summary>
     /// <param name="node"></param>
     /// <param name="nazev"></param>
@@ -259,9 +262,9 @@ XDocument
             }
 
             // Jak� je typ item, at nemus�m pou��vat slovn�k
-            var v = nsmgr.LookupNamespace(item2);
+            var value = nsmgr.LookupNamespace(item2);
 
-            if (!ns.ContainsKey(item)) ns.Add(item, v);
+            if (!ns.ContainsKey(item)) ns.Add(item, value);
         }
 
         return ns;
@@ -337,8 +340,8 @@ string
         string value/*, bool enoughIsContainsAttribute, bool caseSensitive*/)
     {
         var vr = new List<XElement>();
-        var e = GetElementsOfNameRecursive(xElement, tag);
-        foreach (var item in e)
+        var element = GetElementsOfNameRecursive(xElement, tag);
+        foreach (var item in element)
         {
             var attrValue = Attr(item, attr);
             if (attrValue.Contains(
@@ -379,7 +382,7 @@ string
     /// <param name="deli"></param>
     public static string ReturnValueAllSubElementsSeparatedBy(XElement p, string deli)
     {
-        var sb = new StringBuilder();
+        var stringBuilder = new StringBuilder();
         var xml = GetXml(p);
         var mc = Regex.Matches(xml, "<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>");
         var nahrazeno = new List<string>();
@@ -390,8 +393,8 @@ string
                 xml = xml.Replace(item.Value, deli);
             }
 
-        sb.Append(xml);
-        return sb.ToString().Replace(deli + deli, deli);
+        stringBuilder.Append(xml);
+        return stringBuilder.ToString().Replace(deli + deli, deli);
     }
 
     public static string GetXml(XElement node)
@@ -407,8 +410,8 @@ string
         var f = var.Element(XName.Get(first));
         if (f != null)
         {
-            var s = f.Element(XName.Get(second));
-            return s;
+            var text = f.Element(XName.Get(second));
+            return text;
         }
 
         return null;

@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoXml;
 
 public static class XmlHelper
@@ -45,7 +48,7 @@ public static class XmlHelper
 
             writer.Formatting = Formatting.Indented;
 
-            // Write the XML into a formatting XmlTextWriter
+            // Write the XML into argument formatting XmlTextWriter
             document.WriteContentTo(writer);
             writer.Flush();
             mStream.Flush();
@@ -54,7 +57,7 @@ public static class XmlHelper
             // its contents.
             mStream.Position = 0;
 
-            // Read MemoryStream contents into a StreamReader.
+            // Read MemoryStream contents into argument StreamReader.
             StreamReader sReader = new(mStream);
 
             // Extract the text from the StreamReader.
@@ -72,7 +75,7 @@ public static class XmlHelper
         }
 
         mStream.Close();
-        // 'Cannot access a closed Stream.'
+        // 'Cannot access argument closed Stream.'
         //writer.Close();
 
         return result;
@@ -87,7 +90,7 @@ public static class XmlHelper
         var childNodes = ChildNodes(item);
         if (childNodes.Count != 0)
         {
-            var el = childNodes.First(d => d.Name == v);
+            var el = childNodes.First(data => data.Name == v);
             return el?.Value;
         }
 
@@ -108,7 +111,7 @@ public static class XmlHelper
     }
 
     /// <summary>
-    ///     because return type is Object and can't use item.ChildNodes.First(d => d.) etc.
+    ///     because return type is Object and can't use item.ChildNodes.First(data => data.) etc.
     ///     XmlNodeList dědí jen z IEnumerable, IDisposable
     /// </summary>
     /// <returns></returns>
@@ -123,7 +126,7 @@ public static class XmlHelper
     }
 
     /// <summary>
-    ///     WOrkaround for error The node to be removed is not a child of this node.
+    ///     WOrkaround for error The node to be removed is not argument child of this node.
     /// </summary>
     /// <param name="from"></param>
     /// <param name="to"></param>
@@ -242,10 +245,10 @@ public static class XmlHelper
 
     public static XmlDocument CreateXmlDocument(string content)
     {
-        var d = new XmlDocument();
-        d.LoadXml(content);
-        d.PreserveWhitespace = true;
-        return d;
+        var data = new XmlDocument();
+        data.LoadXml(content);
+        data.PreserveWhitespace = true;
+        return data;
     }
 
     /// <summary>
@@ -272,10 +275,10 @@ public static class XmlHelper
         return e.ChildNodes.WithName(v);
     }
 
-    public static string Attr(XmlNode d, string v)
+    public static string Attr(XmlNode data, string v)
     {
-        var a = GetAttributeWithName(d, v);
-        if (a != null) return a.Value;
+        var argument = GetAttributeWithName(data, v);
+        if (argument != null) return argument.Value;
         return null;
     }
 

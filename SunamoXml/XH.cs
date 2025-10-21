@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoXml;
 
 /// <summary>
@@ -77,10 +80,10 @@ XDocument.Load(csproj);
 
     private static string OuterXml(XDocument xml)
     {
-        var sb = new StringBuilder();
-        var xml2 = XmlWriter.Create(sb);
+        var stringBuilder = new StringBuilder();
+        var xml2 = XmlWriter.Create(stringBuilder);
         xml.Document.WriteTo(xml2);
-        return sb.ToString();
+        return stringBuilder.ToString();
     }
 
     /// <summary>

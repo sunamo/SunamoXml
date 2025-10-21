@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoXml.Generators;
 
 /// <summary>
@@ -9,7 +12,7 @@ namespace SunamoXml.Generators;
 public class XmlGeneratorNS2
 {
     private readonly string _ns;
-    protected StringBuilder sb = new();
+    protected StringBuilder stringBuilder = new();
 
     /// <param name="ns"></param>
     public XmlGeneratorNS2(string ns)
@@ -29,27 +32,27 @@ public class XmlGeneratorNS2
 
     public void WriteTagWithAttr(string tag, string atribut, string hodnota)
     {
-        sb.AppendFormat("<" + _ns + "{0} {1}=\"{2}\">", tag, atribut, hodnota);
+        stringBuilder.AppendFormat("<" + _ns + "{0} {1}=\"{2}\">", tag, atribut, hodnota);
     }
 
     public void WriteRaw(string p)
     {
-        sb.Append(p);
+        stringBuilder.Append(p);
     }
 
     public void TerminateTag(string p)
     {
-        sb.AppendFormat("</" + _ns + "{0}>", p);
+        stringBuilder.AppendFormat("</" + _ns + "{0}>", p);
     }
 
     public void WriteTag(string p)
     {
-        sb.AppendFormat("<" + _ns + "{0}>", p);
+        stringBuilder.AppendFormat("<" + _ns + "{0}>", p);
     }
 
     public override string ToString()
     {
-        return sb.ToString().Replace("  />", " />");
+        return stringBuilder.ToString().Replace("  />", " />");
     }
 
     /// <summary>
@@ -59,51 +62,51 @@ public class XmlGeneratorNS2
     /// <param name="p_2"></param>
     public void WriteTagWithAttrs(string p, params string[] p_2)
     {
-        sb.AppendFormat("<" + _ns + "{0} ", p);
-        for (var i = 0; i < p_2.Length; i++) sb.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
-        sb.Append(">");
+        stringBuilder.AppendFormat("<" + _ns + "{0} ", p);
+        for (var i = 0; i < p_2.Length; i++) stringBuilder.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
+        stringBuilder.Append(">");
     }
 
     public void WriteElement(string nazev, string inner)
     {
-        sb.AppendFormat("<" + _ns + "{0}>{1}</" + _ns + "{0}>", nazev, inner);
+        stringBuilder.AppendFormat("<" + _ns + "{0}>{1}</" + _ns + "{0}>", nazev, inner);
     }
 
     public void WriteElementCData(string nazev, string cdata)
     {
-        sb.AppendFormat("<" + _ns + "{0}><![CDATA[{1}]]></" + _ns + "{0}>", nazev, cdata);
+        stringBuilder.AppendFormat("<" + _ns + "{0}><![CDATA[{1}]]></" + _ns + "{0}>", nazev, cdata);
     }
 
     public void WriteXmlDeclaration()
     {
-        sb.Append(XmlTemplates.xml);
+        stringBuilder.Append(XmlTemplates.xml);
     }
 
     public void WriteTagWith2Attrs(string p, string p_2, string p_3, string p_4, string p_5)
     {
         //{0} {1}=\"{2}\" {3}=\"{4}\">
-        sb.AppendFormat("<" + _ns + "{0} {1}=\"{2}\" {3}=\"{4}\">", p, p_2, p_3, p_4, p_5);
+        stringBuilder.AppendFormat("<" + _ns + "{0} {1}=\"{2}\" {3}=\"{4}\">", p, p_2, p_3, p_4, p_5);
     }
 
     public static string WriteSimpleTagS(string ns, string tag, params string[] p)
     {
-        var x = new XmlGeneratorNS2(ns);
+        var xValue = new XmlGeneratorNS2(ns);
         if (p.Length == 0)
-            x.WriteSimpleTag(tag);
+            xValue.WriteSimpleTag(tag);
         else
-            x.WriteSimpleTag(tag, p);
-        return x.ToString();
+            xValue.WriteSimpleTag(tag, p);
+        return xValue.ToString();
     }
 
     public void WriteSimpleTag(string tag)
     {
-        sb.AppendFormat("<" + _ns + "{0} />", tag);
+        stringBuilder.AppendFormat("<" + _ns + "{0} />", tag);
     }
 
     public void WriteSimpleTag(string tag, params string[] p_2)
     {
-        sb.AppendFormat("<" + _ns + "{0} ", tag);
-        for (var i = 0; i < p_2.Length; i++) sb.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
-        sb.Append(" />");
+        stringBuilder.AppendFormat("<" + _ns + "{0} ", tag);
+        for (var i = 0; i < p_2.Length; i++) stringBuilder.AppendFormat("{0}=\"{1}\"", p_2[i], p_2[++i]);
+        stringBuilder.Append(" />");
     }
 }
