@@ -106,7 +106,7 @@ public class XmlGenerator //: IXmlGenerator
 
     public void WriteTag(string parameter)
     {
-        var result = $"<{p}>";
+        var result = $"<{parameter}>";
         if (_useStack) _stack.Push(result);
         stringBuilder.Append(result);
     }

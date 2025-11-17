@@ -12,18 +12,18 @@ public class XmlGeneratorSelective : XmlGenerator
     /// <param name="p_2"></param>
     public void WriteTagWithAttrsSelective(string p, List<string> vynechat, List<string> p_2)
     {
-        sb.AppendFormat("<{0} ", p);
+        stringBuilder.AppendFormat("<{0} ", p);
         for (var i = 0; i < p_2.Count / 2; i++)
         {
             var nameAtt = p_2[i * 2];
-            if (!vynechat.Contains(nameAtt)) sb.AppendFormat("{0}=\"{1}\"", nameAtt, p_2[i * 2 + 1]);
+            if (!vynechat.Contains(nameAtt)) stringBuilder.AppendFormat("{0}=\"{1}\"", nameAtt, p_2[i * 2 + 1]);
         }
 
-        sb.Append(">");
+        stringBuilder.Append(">");
     }
 
     public override string ToString()
     {
-        return sb.ToString();
+        return stringBuilder.ToString();
     }
 }
