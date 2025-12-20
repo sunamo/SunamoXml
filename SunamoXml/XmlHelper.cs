@@ -1,12 +1,9 @@
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-
 namespace SunamoXml;
-
-public static class XmlHelper
+public static partial class XmlHelper
 {
     public static XmlAttribute foundedNode;
-
     public static XmlNode GetAttributeWithName(XmlNode item, string p)
     {
         foreach (XmlAttribute item2 in item.Attributes)
@@ -21,7 +18,8 @@ public static class XmlHelper
 
     public static bool IsXml(string str)
     {
-        if (!string.IsNullOrEmpty(str) && str.TrimStart().StartsWith("<")) return true;
+        if (!string.IsNullOrEmpty(str) && str.TrimStart().StartsWith("<"))
+            return true;
         return false;
     }
 
@@ -29,64 +27,52 @@ public static class XmlHelper
     ///     Usage: FubuCsprojFile
     ///     A2 is used only in exception
     /// </summary>
-    /// <param name="xmlContent"></param>
-    /// <param name="path"></param>
+    /// <param name = "xmlContent"></param>
+    /// <param name = "path"></param>
     /// <returns></returns>
     public static string FormatXmlInMemory(string xmlContent, string path = "")
     {
         MemoryStream mStream = new();
         XmlTextWriter writer = new(mStream, Encoding.Unicode);
         //XmlNamespacesHolder h = new XmlNamespacesHolder();
-
         //document = h.ParseAndRemoveNamespacesXmlDocument(xml);
         XmlDocument document = new();
-
         string result;
         try
         {
             document.LoadXml(xmlContent);
-
             writer.Formatting = Formatting.Indented;
-
             // Write the XML into argument formatting XmlTextWriter
             document.WriteContentTo(writer);
             writer.Flush();
             mStream.Flush();
-
             // Have to rewind the MemoryStream in order to read
             // its contents.
             mStream.Position = 0;
-
             // Read MemoryStream contents into argument StreamReader.
             StreamReader sReader = new(mStream);
-
             // Extract the text from the StreamReader.
             var formattedXml = sReader.ReadToEnd();
-
             result = formattedXml;
         }
         catch (XmlException ex)
         {
             var nl = Environment.NewLine;
-
-
             return "Exception:" + path + nl + nl + ex.Message;
-            //ThrowEx.CustomWithStackTrace(ex);
+        //ThrowEx.CustomWithStackTrace(ex);
         }
 
         mStream.Close();
         // 'Cannot access argument closed Stream.'
         //writer.Close();
-
         return result;
     }
 
     public static string GetAttrValueOrInnerElement(XmlNode item, string v)
     {
         var attr = item.Attributes[v];
-
-        if (attr != null) return attr.Value;
-
+        if (attr != null)
+            return attr.Value;
         var childNodes = ChildNodes(item);
         if (childNodes.Count != 0)
         {
@@ -119,22 +105,20 @@ public static class XmlHelper
     {
         // TODO: až přilinkuji SunamoExtensions tak .COunt
         var result = new List<XmlNode>();
-
-        foreach (XmlNode item in xml.ChildNodes) result.Add(item);
-
+        foreach (XmlNode item in xml.ChildNodes)
+            result.Add(item);
         return result;
     }
 
     /// <summary>
     ///     WOrkaround for error The node to be removed is not argument child of this node.
     /// </summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
+    /// <param name = "from"></param>
+    /// <param name = "to"></param>
     public static XmlNode ReplaceChildNodeByOuterHtml(XmlNode from, XmlNode to)
     {
         var pn = from.ParentNode;
         var chn = pn.ChildNodes;
-
         if (chn.Contains(from))
         {
             from = from.ParentNode.ReplaceChild(to, from);
@@ -156,12 +140,10 @@ public static class XmlHelper
         return from;
     }
 
-    #region Same funcionality as in XHelper
-
     /// <summary>
     ///     Vrátí InnerXml nebo hodnotu CData podle typu uzlu
     /// </summary>
-    /// <param name="eventDescriptionNode"></param>
+    /// <param name = "eventDescriptionNode"></param>
     public static string GetInnerXml(XmlNode eventDescriptionNode)
     {
         var eventDescription = "";
@@ -172,19 +154,18 @@ public static class XmlHelper
         }
         else
         {
-            if (eventDescriptionNode != null) eventDescription = eventDescriptionNode.InnerXml;
+            if (eventDescriptionNode != null)
+                eventDescription = eventDescriptionNode.InnerXml;
         }
 
         return eventDescription;
     }
 
     private const string dummyXmlns = "https://sunamo.cz/_/dummyXmlns";
-
     public static void RemoveAttrsFromRoot(ref XmlDocument x, string newRootElementName, params string[] attrsName)
     {
         var docNew = new XmlDocument();
         var newRoot = docNew.CreateElement(newRootElementName);
-
         foreach (XmlAttribute item in x.DocumentElement.Attributes)
             if (!attrsName.Contains(item.Name))
             {
@@ -209,8 +190,8 @@ public static class XmlHelper
     {
         var docNew = new XmlDocument();
         var newRoot = docNew.CreateElement(newRootElementName);
-
-        if (!ThrowEx.HasOddNumberOfElements("attrs", attrs)) return;
+        if (!ThrowEx.HasOddNumberOfElements("attrs", attrs))
+            return;
         var addedAny = false;
         //for (int i = 0; i < attrs.Length; i++)
         //{
@@ -223,15 +204,13 @@ public static class XmlHelper
         //    }
         //    //newRoot.Attributes.Append();
         //}
-
         //var x2 = XmlHelper.Attr(newRoot, "xmlns");
         //if (x2 == dummyXmlns)
         //{
         //    newRoot.Attributes.Remove(XmlHelper.foundedNode);
         //}
-
-        if (!addedAny) return;
-
+        if (!addedAny)
+            return;
         docNew.AppendChild(newRoot);
         newRoot.InnerXml = x.DocumentElement.InnerXml;
         x = docNew;
@@ -241,7 +220,6 @@ public static class XmlHelper
     {
         return xe.InnerText;
     }
-
 
     public static XmlDocument CreateXmlDocument(string content)
     {
@@ -254,14 +232,13 @@ public static class XmlHelper
     /// <summary>
     ///     Vrátí null pokud se nepodaří nalézt
     /// </summary>
-    /// <param name="item"></param>
-    /// <param name="p"></param>
+    /// <param name = "item"></param>
+    /// <param name = "p"></param>
     public static XmlNode GetChildNodeWithName(XmlNode item, string p)
     {
         foreach (XmlNode item2 in item.ChildNodes)
             if (item2.Name == p)
                 return item2;
-
         return null;
     }
 
@@ -269,38 +246,4 @@ public static class XmlHelper
     {
         return e.ChildNodes.First(n);
     }
-
-    public static IList<XmlNode> GetElementsOfName(XmlNode e, string v)
-    {
-        return e.ChildNodes.WithName(v);
-    }
-
-    public static string Attr(XmlNode data, string v)
-    {
-        var argument = GetAttributeWithName(data, v);
-        if (argument != null) return argument.Value;
-        return null;
-    }
-
-    public static void SetAttribute(XmlNode node, string include, string rel)
-    {
-        var xe = (XmlElement)node;
-        if (xe != null)
-        {
-            xe.SetAttribute(include, rel);
-            return;
-        }
-
-        // Working only when attribute
-        var atrValue = Attr(node, include);
-        if (atrValue == null)
-        {
-            var xa = node.OwnerDocument.CreateAttribute(include);
-            node.Attributes.Append(xa);
-        }
-
-        node.Attributes[include].Value = rel;
-    }
-
-    #endregion
 }
