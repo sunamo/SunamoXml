@@ -1,6 +1,7 @@
+namespace SunamoXml;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoXml;
 public static partial class XmlHelper
 {
     public static XmlAttribute foundedNode;

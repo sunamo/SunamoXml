@@ -1,6 +1,7 @@
+namespace SunamoXml;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoXml;
 public partial class XHelper
 {
     public static Dictionary<string, string> ns = new();
