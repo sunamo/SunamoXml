@@ -28,14 +28,14 @@ public class XmlGenerator //: IXmlGenerator
         return stringBuilder.Length;
     }
 
-    public void WriteNonPairTagWith2Attrs(string p1, string p2, string p3, string p4, string p5)
+    public void WriteNonPairTagWith2Attrs(string tagName, string firstName, string firstValue, string secondName, string secondValue)
     {
-        stringBuilder.AppendFormat("<{0} {1}=\"{2}\" {3}=\"{4}\" />", p1, p2, p3, p4, p5);
+        stringBuilder.AppendFormat("<{0} {1}=\"{2}\" {3}=\"{4}\" />", tagName, firstName, firstValue, secondName, secondValue);
     }
 
-    public void WriteNonPairTagWithAttr(string p1, string p2, string p3)
+    public void WriteNonPairTagWithAttr(string tagName, string attrName, string attrValue)
     {
-        stringBuilder.AppendFormat("<{0} {1}=\"{2}\" />", p1, p2, p3);
+        stringBuilder.AppendFormat("<{0} {1}=\"{2}\" />", tagName, attrName, attrValue);
     }
 
     public void Insert(int index, string text)
@@ -58,19 +58,19 @@ public class XmlGenerator //: IXmlGenerator
         stringBuilder.Append("-->");
     }
 
-    public void WriteNonPairTagWithAttrs(string tag, List<string> args)
+    public void WriteNonPairTagWithAttrs(string tag, List<string> attributes)
     {
-        WriteNonPairTagWithAttrs(tag, args.ToArray());
+        WriteNonPairTagWithAttrs(tag, attributes.ToArray());
     }
 
-    public void WriteNonPairTagWithAttrs(string tag, params string[] args)
+    public void WriteNonPairTagWithAttrs(string tag, params string[] attributes)
     {
         stringBuilder.AppendFormat("<{0} ", tag);
-        for (var i = 0; i < args.Length; i++)
+        for (var i = 0; i < attributes.Length; i++)
         {
-            var text = args[i];
-            object hodnota = args[++i];
-            stringBuilder.AppendFormat("{0}=\"{1}\" ", text, hodnota);
+            var text = attributes[i];
+            object value = attributes[++i];
+            stringBuilder.AppendFormat("{0}=\"{1}\" ", text, value);
         }
 
         stringBuilder.Append(" />");
@@ -81,12 +81,12 @@ public class XmlGenerator //: IXmlGenerator
         WriteRaw( /*string.Format("<![CDATA[{0}]]>", innerCData)*/ string.Format("<![CDATA[{0}]]>", innerCData));
     }
 
-    public void WriteTagWithAttr(string tag, string atribut, string hodnota, bool skipEmptyOrNull = false)
+    public void WriteTagWithAttr(string tag, string attributeName, string attributeValue, bool skipEmptyOrNull = false)
     {
         if (skipEmptyOrNull)
-            if (string.IsNullOrWhiteSpace(hodnota))
+            if (string.IsNullOrWhiteSpace(attributeValue))
                 return;
-        var result = /*string.Format*/ string.Format("<{0} {1}=\"{2}\">", tag, atribut, hodnota);
+        var result = /*string.Format*/ string.Format("<{0} {1}=\"{2}\">", tag, attributeName, attributeValue);
         if (_useStack) _stack.Push(result);
         stringBuilder.Append(result);
     }
@@ -113,39 +113,39 @@ public class XmlGenerator //: IXmlGenerator
         return stringBuilder.ToString();
     }
 
-    public void WriteTagWithAttrs(string parameter, List<string> p_2)
+    public void WriteTagWithAttrs(string tagName, List<string> attributes)
     {
-        WriteTagWithAttrs(parameter, p_2.ToArray());
+        WriteTagWithAttrs(tagName, attributes.ToArray());
     }
 
     /// <summary>
     ///     if will be sth null, wont be writing
     /// </summary>
-    /// <param name="p"></param>
-    /// <param name="p_2"></param>
-    public void WriteTagWithAttrs(string parameter, params string[] p_2)
+    /// <param name="tagName"></param>
+    /// <param name="attributes"></param>
+    public void WriteTagWithAttrs(string tagName, params string[] attributes)
     {
-        WriteTagWithAttrs(true, parameter, p_2);
+        WriteTagWithAttrs(true, tagName, attributes);
     }
 
     /// <summary>
     ///     Add also null
     /// </summary>
     /// <param name="nameTag"></param>
-    /// <param name="p"></param>
-    private void WriteTagWithAttrs(string nameTag, Dictionary<string, string> parameter)
+    /// <param name="attributes"></param>
+    private void WriteTagWithAttrs(string nameTag, Dictionary<string, string> attributes)
     {
-        WriteTagWithAttrs(true, nameTag, DictionaryHelper.GetListStringFromDictionary(parameter).ToArray());
+        WriteTagWithAttrs(true, nameTag, DictionaryHelper.GetListStringFromDictionary(attributes).ToArray());
     }
 
     /// <summary>
     ///     Dont write attr with null
     /// </summary>
-    /// <param name="p"></param>
-    /// <param name="p_2"></param>
-    public void WriteTagWithAttrsCheckNull(string parameter, params string[] p_2)
+    /// <param name="tagName"></param>
+    /// <param name="attributes"></param>
+    public void WriteTagWithAttrsCheckNull(string tagName, params string[] attributes)
     {
-        WriteTagWithAttrs(false, parameter, p_2);
+        WriteTagWithAttrs(false, tagName, attributes);
     }
 
     private bool IsNulledOrEmpty(string text)
@@ -154,22 +154,22 @@ public class XmlGenerator //: IXmlGenerator
         return false;
     }
 
-    public void WriteTagNamespaceManager(string nameTag, XmlNamespaceManager nsmgr, params string[] args)
+    public void WriteTagNamespaceManager(string nameTag, XmlNamespaceManager namespaceManager, params string[] attributes)
     {
-        //List<string> parameter = new List<string>(args);
-        var parameter = XHelper.XmlNamespaces(nsmgr, true);
-        for (var i = 0; i < args.Count(); i++) parameter.Add(args[i], args[++i]);
-        WriteTagWithAttrs(nameTag, parameter);
+        //List<string> parameter = new List<string>(attributes);
+        var dictionary = XHelper.XmlNamespaces(namespaceManager, true);
+        for (var i = 0; i < attributes.Count(); i++) dictionary.Add(attributes[i], attributes[++i]);
+        WriteTagWithAttrs(nameTag, dictionary);
     }
 
-    public void WriteNonPairTagWithAttrs(bool appendNull, string parameter, params string[] p_2)
+    public void WriteNonPairTagWithAttrs(bool appendNull, string tagName, params string[] attributes)
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.AppendFormat("<{0} ", parameter);
-        for (var i = 0; i < p_2.Length; i++)
+        stringBuilder.AppendFormat("<{0} ", tagName);
+        for (var i = 0; i < attributes.Length; i++)
         {
-            var attr = p_2[i];
-            var val = p_2[++i];
+            var attr = attributes[i];
+            var val = attributes[++i];
             if ((string.IsNullOrEmpty(val) && appendNull) || !string.IsNullOrEmpty(val))
                 if ((!IsNulledOrEmpty(attr) && appendNull) || !IsNulledOrEmpty(val))
                     stringBuilder.AppendFormat("{0}=\"{1}\" ", attr, val);
@@ -185,16 +185,17 @@ public class XmlGenerator //: IXmlGenerator
     /// <summary>
     ///     if will be sth null, wont be writing
     /// </summary>
-    /// <param name="p"></param>
-    /// <param name="p_2"></param>
-    private void WriteTagWithAttrs(bool appendNull, string parameter, params string[] p_2)
+    /// <param name="appendNull"></param>
+    /// <param name="tagName"></param>
+    /// <param name="attributes"></param>
+    private void WriteTagWithAttrs(bool appendNull, string tagName, params string[] attributes)
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.AppendFormat("<{0} ", parameter);
-        for (var i = 0; i < p_2.Length; i++)
+        stringBuilder.AppendFormat("<{0} ", tagName);
+        for (var i = 0; i < attributes.Length; i++)
         {
-            var attr = p_2[i];
-            var val = p_2[++i];
+            var attr = attributes[i];
+            var val = attributes[++i];
             if ((string.IsNullOrEmpty(val) && appendNull) || !string.IsNullOrEmpty(val))
                 if ((!IsNulledOrEmpty(attr) && appendNull) || !IsNulledOrEmpty(val))
                     stringBuilder.AppendFormat("{0}=\"{1}\" ", attr, val);
@@ -206,9 +207,9 @@ public class XmlGenerator //: IXmlGenerator
         this.stringBuilder.Append(result);
     }
 
-    public void WriteElement(string nazev, string inner)
+    public void WriteElement(string elementName, string inner)
     {
-        stringBuilder.AppendFormat("<{0}>{1}</{0}>", nazev, inner);
+        stringBuilder.AppendFormat("<{0}>{1}</{0}>", elementName, inner);
     }
 
     public void WriteXmlDeclaration()
@@ -216,15 +217,15 @@ public class XmlGenerator //: IXmlGenerator
         stringBuilder.Append(XmlTemplates.xml);
     }
 
-    public void WriteTagWith2Attrs(string parameter, string p_2, string p_3, string p_4, string p_5)
+    public void WriteTagWith2Attrs(string tagName, string firstName, string firstValue, string secondName, string secondValue)
     {
-        var result = /*string.Format*/ string.Format("<{0} {1}=\"{2}\" {3}=\"{4}\">", parameter, p_2, p_3, p_4, p_5);
+        var result = /*string.Format*/ string.Format("<{0} {1}=\"{2}\" {3}=\"{4}\">", tagName, firstName, firstValue, secondName, secondValue);
         if (_useStack) _stack.Push(result);
         stringBuilder.Append(result);
     }
 
-    public void WriteNonPairTag(string parameter)
+    public void WriteNonPairTag(string tagName)
     {
-        stringBuilder.AppendFormat("<{0} />", parameter);
+        stringBuilder.AppendFormat("<{0} />", tagName);
     }
 }
