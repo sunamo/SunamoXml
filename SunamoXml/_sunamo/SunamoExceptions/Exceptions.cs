@@ -1,71 +1,96 @@
 namespace SunamoXml._sunamo.SunamoExceptions;
 
-// © www.sunamo.cz. All Rights Reserved.
+/// <summary>
+/// Provides methods for creating exception messages and inspecting the call stack.
+/// </summary>
 internal sealed partial class Exceptions
 {
-    #region Other
+    /// <summary>
+    /// Prepends a caller context prefix to a message if the prefix is not empty.
+    /// </summary>
+    /// <param name="before">The caller context prefix.</param>
     internal static string CheckBefore(string before)
     {
         return string.IsNullOrWhiteSpace(before) ? string.Empty : before + ": ";
     }
 
-    internal static string TextOfExceptions(Exception ex, bool alsoInner = true)
+    /// <summary>
+    /// Returns a formatted string containing all exception messages from the exception chain.
+    /// </summary>
+    /// <param name="exception">The exception to format.</param>
+    /// <param name="isIncludingInnerExceptions">Whether to include inner exception messages.</param>
+    internal static string TextOfExceptions(Exception exception, bool isIncludingInnerExceptions = true)
     {
-        if (ex == null) return string.Empty;
+        if (exception == null) return string.Empty;
         StringBuilder stringBuilder = new();
         stringBuilder.Append("Exception:");
-        stringBuilder.AppendLine(ex.Message);
-        if (alsoInner)
-            while (ex.InnerException != null)
+        stringBuilder.AppendLine(exception.Message);
+        if (isIncludingInnerExceptions)
+            while (exception.InnerException != null)
             {
-                ex = ex.InnerException;
-                stringBuilder.AppendLine(ex.Message);
+                exception = exception.InnerException;
+                stringBuilder.AppendLine(exception.Message);
             }
         var result = stringBuilder.ToString();
         return result;
     }
 
-    internal static Tuple<string, string, string> PlaceOfException(
-bool fillAlsoFirstTwo = true)
+    /// <summary>
+    /// Inspects the call stack and returns the type name, method name, and full stack trace.
+    /// </summary>
+    /// <param name="isFillAlsoFirstTwo">Whether to also extract the type and method name from the first non-ThrowEx frame.</param>
+    internal static Tuple<string, string, string> PlaceOfException(bool isFillAlsoFirstTwo = true)
     {
-        StackTrace st = new();
-        var value = st.ToString();
-        var lines = value.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        StackTrace stackTrace = new();
+        var stackTraceText = stackTrace.ToString();
+        var lines = stackTraceText.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
         lines.RemoveAt(0);
         var i = 0;
-        string type = string.Empty;
+        string typeName = string.Empty;
         string methodName = string.Empty;
         for (; i < lines.Count; i++)
         {
-            var item = lines[i];
-            if (fillAlsoFirstTwo)
-                if (!item.StartsWith("   at ThrowEx"))
+            var line = lines[i];
+            if (isFillAlsoFirstTwo)
+                if (!line.StartsWith("   at ThrowEx"))
                 {
-                    TypeAndMethodName(item, out type, out methodName);
-                    fillAlsoFirstTwo = false;
+                    TypeAndMethodName(line, out typeName, out methodName);
+                    isFillAlsoFirstTwo = false;
                 }
-            if (item.StartsWith("at System."))
+            if (line.StartsWith("at System."))
             {
                 lines.Add(string.Empty);
                 lines.Add(string.Empty);
                 break;
             }
         }
-        return new Tuple<string, string, string>(type, methodName, string.Join(Environment.NewLine, lines));
+        return new Tuple<string, string, string>(typeName, methodName, string.Join(Environment.NewLine, lines));
     }
-    internal static void TypeAndMethodName(string lines, out string type, out string methodName)
+
+    /// <summary>
+    /// Extracts the type name and method name from a stack trace line.
+    /// </summary>
+    /// <param name="line">The stack trace line to parse.</param>
+    /// <param name="typeName">The extracted type name.</param>
+    /// <param name="methodName">The extracted method name.</param>
+    internal static void TypeAndMethodName(string line, out string typeName, out string methodName)
     {
-        var s2 = lines.Split("at ")[1].Trim();
-        var text = s2.Split("(")[0];
-        var parameter = text.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-        methodName = parameter[^1];
-        parameter.RemoveAt(parameter.Count - 1);
-        type = string.Join(".", parameter);
+        var trimmedLine = line.Split("at ")[1].Trim();
+        var fullName = trimmedLine.Split('(')[0];
+        var parts = fullName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        methodName = parts[^1];
+        parts.RemoveAt(parts.Count - 1);
+        typeName = string.Join(".", parts);
     }
-    internal static string CallingMethod(int value = 1)
+
+    /// <summary>
+    /// Returns the name of the calling method at the specified stack depth.
+    /// </summary>
+    /// <param name="depth">The stack frame depth to inspect.</param>
+    internal static string CallingMethod(int depth = 1)
     {
         StackTrace stackTrace = new();
-        var methodBase = stackTrace.GetFrame(value)?.GetMethod();
+        var methodBase = stackTrace.GetFrame(depth)?.GetMethod();
         if (methodBase == null)
         {
             return "Method name cannot be get";
@@ -73,27 +98,43 @@ bool fillAlsoFirstTwo = true)
         var methodName = methodBase.Name;
         return methodName;
     }
-    #endregion
 
-    #region IsNullOrWhitespace
-    readonly static StringBuilder sbAdditionalInfoInner = new();
-    readonly static StringBuilder sbAdditionalInfo = new();
-    #endregion
-
-    #region OnlyReturnString 
+    /// <summary>
+    /// Creates a custom exception message with an optional caller context prefix.
+    /// </summary>
+    /// <param name="before">The caller context prefix.</param>
+    /// <param name="message">The exception message.</param>
     internal static string? Custom(string before, string message)
     {
         return CheckBefore(before) + message;
     }
+
+    /// <summary>
+    /// Creates a "not implemented method" exception message.
+    /// </summary>
+    /// <param name="before">The caller context prefix.</param>
     internal static string? NotImplementedMethod(string before)
     {
         return CheckBefore(before) + "Not implemented method.";
     }
-    #endregion
-    internal static string? HasOddNumberOfElements(string before, string listName, ICollection list)
+
+    /// <summary>
+    /// Returns an error message if the collection has an odd number of elements, otherwise null.
+    /// </summary>
+    /// <param name="before">The caller context prefix.</param>
+    /// <param name="listName">The name of the collection being validated.</param>
+    /// <param name="collection">The collection to validate.</param>
+    internal static string? HasOddNumberOfElements(string before, string listName, ICollection collection)
     {
-        return list.Count % 2 == 1 ? CheckBefore(before) + listName + " has odd number of elements " + list.Count : null;
+        return collection.Count % 2 == 1 ? CheckBefore(before) + listName + " has odd number of elements " + collection.Count : null;
     }
+
+    /// <summary>
+    /// Returns an error message if the variable is null, otherwise null.
+    /// </summary>
+    /// <param name="before">The caller context prefix.</param>
+    /// <param name="variableName">The name of the variable being checked.</param>
+    /// <param name="variable">The variable to check for null.</param>
     internal static string? IsNull(string before, string variableName, object? variable)
     {
         return variable == null ? CheckBefore(before) + variableName + " " + "is null" + "." : null;

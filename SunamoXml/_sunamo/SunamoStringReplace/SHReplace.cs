@@ -1,12 +1,18 @@
 namespace SunamoXml._sunamo.SunamoStringReplace;
 
+/// <summary>
+/// String replacement helper methods for whitespace and special character handling.
+/// </summary>
 internal class SHReplace
 {
-    internal static string ReplaceAllDoubleSpaceToSingle(string text, bool alsoHtml = false)
+    /// <summary>
+    /// Replaces all occurrences of double spaces with a single space. Optionally also replaces HTML non-breaking spaces.
+    /// </summary>
+    /// <param name="text">The text to process.</param>
+    /// <param name="isAlsoReplacingHtml">Whether to also replace HTML non-breaking space entities.</param>
+    internal static string ReplaceAllDoubleSpaceToSingle(string text, bool isAlsoReplacingHtml = false)
     {
-        //text = SH.FromSpace160To32(text);
-
-        if (alsoHtml)
+        if (isAlsoReplacingHtml)
         {
             text = text.Replace(" &nbsp;", " ");
             text = text.Replace("&nbsp; ", " ");
@@ -14,30 +20,22 @@ internal class SHReplace
         }
 
         while (text.Contains("  "))
-            text = text.Replace("  ", " "); // ReplaceAll2(text, "", );
-
-        // Here it was cycling, dont know why, therefore without while
-        //while (text.Contains("space160 + space"))
-        //{
-        //text = ReplaceAll2(text, "", "space160 + space");
-        //}
-
-        //while (text.Contains("space + space160"))
-        //{
-        //text = ReplaceAll2(text, "", "space + space160");
-        //}
+            text = text.Replace("  ", " ");
 
         return text;
     }
 
-
-    internal static string ReplaceAllWhitecharsForSpace(string c)
+    /// <summary>
+    /// Replaces all whitespace characters (tabs, newlines, etc.) with regular spaces.
+    /// </summary>
+    /// <param name="text">The text to process.</param>
+    internal static string ReplaceAllWhitecharsForSpace(string text)
     {
-        WhitespaceCharService whitespaceChar = new();
-        foreach (var item in whitespaceChar.whiteSpaceChars)
+        WhitespaceCharService whitespaceCharService = new();
+        foreach (var item in whitespaceCharService.WhiteSpaceChars)
             if (item != ' ')
-                c = c.Replace(item, ' ');
+                text = text.Replace(item, ' ');
 
-        return c;
+        return text;
     }
 }

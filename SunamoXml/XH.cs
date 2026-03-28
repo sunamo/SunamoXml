@@ -1,39 +1,39 @@
 namespace SunamoXml;
 
 /// <summary>
-///     XH = XmlElement
-///     XHelper = XElement
+/// XML helper class operating on <see cref="XmlDocument"/> and <see cref="XDocument"/> for loading, sanitizing, and manipulating XML content.
 /// </summary>
 public class XH
 {
-    private static Type type = typeof(XH);
-    public static XmlDocument xd = new();
+    /// <summary>
+    /// Shared XmlDocument instance for general-purpose XML operations.
+    /// </summary>
+    public static XmlDocument XmlDocument { get; set; } = new();
 
-    //public static void RemoveFirstElement(string xml, string elem)
-    //{
-    //    var xd = XDocument.Parse(xml);
-    //    //xd.Descendants("")
-    //}
-
+    /// <summary>
+    /// Adds or removes an XML namespace from a .csproj or XML file.
+    /// </summary>
+    /// <param name="csprojPath">The path to the file to modify.</param>
+    /// <param name="xmlNamespace">The namespace to add or remove.</param>
+    /// <param name="isAdding">True to add the namespace, false to remove it.</param>
     public static
 #if ASYNC
         async Task
 #else
 void
 #endif
-        AddXmlns(string csproj, XNamespace ns, bool add)
+        AddXmlns(string csprojPath, XNamespace xmlNamespace, bool isAdding)
     {
-        if (add)
+        if (isAdding)
         {
-            var xml =
+            var document =
 #if ASYNC
-                XDocument.Load(csproj);
-            //await XDocument.LoadAsync(csproj);
+                XDocument.Load(csprojPath);
 #else
-XDocument.Load(csproj);
+XDocument.Load(csprojPath);
 #endif
-            AddNs(ns, xml);
-            xml.Save(csproj);
+            AddNamespace(xmlNamespace, document);
+            document.Save(csprojPath);
         }
         else
         {
@@ -41,70 +41,94 @@ XDocument.Load(csproj);
 #if ASYNC
                 await
 #endif
-                    File.ReadAllTextAsync(csproj);
-            text = RemoveNs(ns, text);
+                    File.ReadAllTextAsync(csprojPath);
+            text = RemoveNamespace(xmlNamespace, text);
 #if ASYNC
             await
 #endif
-                File.WriteAllTextAsync(csproj, text);
+                File.WriteAllTextAsync(csprojPath, text);
         }
     }
 
-    private static void AddNs(XNamespace ns, XDocument xml)
+    /// <summary>
+    /// Adds the specified namespace to all elements and sets it as the root xmlns attribute.
+    /// </summary>
+    /// <param name="xmlNamespace">The namespace to add.</param>
+    /// <param name="document">The XDocument to modify.</param>
+    private static void AddNamespace(XNamespace xmlNamespace, XDocument document)
     {
-        foreach (var element in xml.Descendants().ToList()) element.Name = ns + element.Name.LocalName;
-        xml.Root.SetAttributeValue("xmlns", ns.ToString());
+        foreach (var element in document.Descendants().ToList()) element.Name = xmlNamespace + element.Name.LocalName;
+        document.Root?.SetAttributeValue("xmlns", xmlNamespace.ToString());
     }
 
-    private static string RemoveNs(XNamespace ns, string text)
+    /// <summary>
+    /// Removes the xmlns declaration for the specified namespace from the text.
+    /// </summary>
+    /// <param name="xmlNamespace">The namespace to remove.</param>
+    /// <param name="text">The XML text to process.</param>
+    private static string RemoveNamespace(XNamespace xmlNamespace, string text)
     {
-        var xmlns = "xmlns=\"" + ns + "\"";
-        text = SH.ReplaceOnce(text, xmlns, string.Empty);
+        var xmlnsDeclaration = "xmlns=\"" + xmlNamespace + "\"";
+        text = SH.ReplaceOnce(text, xmlnsDeclaration, string.Empty);
         return text;
     }
 
-    public static string AddXmlnsContent(string content, XNamespace ns, bool add)
+    /// <summary>
+    /// Adds or removes an XML namespace from an in-memory XML string.
+    /// </summary>
+    /// <param name="content">The XML content string.</param>
+    /// <param name="xmlNamespace">The namespace to add or remove.</param>
+    /// <param name="isAdding">True to add the namespace, false to remove it.</param>
+    public static string AddXmlnsContent(string content, XNamespace xmlNamespace, bool isAdding)
     {
-        if (add)
+        if (isAdding)
         {
-            var xml = XDocument.Parse(content);
-            AddNs(ns, xml);
-            return OuterXml(xml);
+            var document = XDocument.Parse(content);
+            AddNamespace(xmlNamespace, document);
+            return OuterXml(document);
         }
 
-        return RemoveNs(ns, content);
+        return RemoveNamespace(xmlNamespace, content);
     }
 
-    private static string OuterXml(XDocument xml)
+    /// <summary>
+    /// Returns the outer XML representation of an XDocument.
+    /// </summary>
+    /// <param name="document">The XDocument to serialize.</param>
+    private static string OuterXml(XDocument document)
     {
         var stringBuilder = new StringBuilder();
-        var xml2 = XmlWriter.Create(stringBuilder);
-        xml.Document.WriteTo(xml2);
+        var xmlWriter = XmlWriter.Create(stringBuilder);
+        document.Document?.WriteTo(xmlWriter);
         return stringBuilder.ToString();
     }
 
     /// <summary>
+    /// Returns the inner XML of the document element parsed from the specified XML string.
     /// </summary>
-    /// <param name="xml"></param>
+    /// <param name="xml">The XML string to parse.</param>
     public static string InnerXml(string xml)
     {
-        var xdoc = new XmlDocument();
-        xdoc.LoadXml(xml);
-        return xdoc.DocumentElement.InnerXml;
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml(xml);
+        return xmlDocument.DocumentElement?.InnerXml ?? string.Empty;
     }
 
     /// <summary>
+    /// Replaces special HTML entity references (right/left single quotation marks) with their literal equivalents.
     /// </summary>
-    public static string ReplaceSpecialHtmlEntity(string vstup)
+    /// <param name="text">The text containing HTML entities to replace.</param>
+    public static string ReplaceSpecialHtmlEntity(string text)
     {
-        vstup = vstup.Replace("&rsquo;", "'"); //
-        vstup = vstup.Replace("&lsquo;", "'"); //¢
-        return vstup;
+        text = text.Replace("&rsquo;", "'");
+        text = text.Replace("&lsquo;", "'");
+        return text;
     }
 
     /// <summary>
+    /// Replaces standalone ampersands (not part of valid XML entities) with the XML-safe &amp;amp; entity.
     /// </summary>
-    /// <param name="xml"></param>
+    /// <param name="xml">The XML string to process.</param>
     public static string ReplaceAmpInString(string xml)
     {
         var badAmpersand = new Regex("&(?![a-zA-Z]{2,6};|#[0-9]{2,4};)");
@@ -113,57 +137,52 @@ XDocument.Load(csproj);
     }
 
     /// <summary>
-    ///     Do A2 se vklzda jiz hotove xml, nikoliv soubor.
-    ///     G posledni dite, to znamena ze pri parsovani celeho dokumentu vraci root.
+    /// Parses the XML string and returns the root node (last child of the document).
     /// </summary>
-    /// <param name="soubor"></param>
-    public static XmlNode ReturnXmlRoot(string xml)
+    /// <param name="xml">The XML string to parse.</param>
+    public static XmlNode? ReturnXmlRoot(string xml)
     {
-        var xdoc = new XmlDocument();
-        xdoc.LoadXml(xml);
-        return (XmlNode)xdoc.LastChild;
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml(xml);
+        return xmlDocument.LastChild;
     }
 
     /// <summary>
-    ///     Vraci FirstChild, pri parsaci celeho dokumentu tak vraci xml deklaraci.
-    ///     A2 should be entered otherwise can occur error "different XmlDocument context"
+    /// Parses the XML string preserving whitespace and returns the first child node (typically the XML declaration).
     /// </summary>
-    /// <param name="soubor"></param>
-    /// <param name="xnm"></param>
-    public static XmlNode ReturnXmlNode(string xml)
+    /// <param name="xml">The XML string to parse.</param>
+    public static XmlNode? ReturnXmlNode(string xml)
     {
-        XmlDocument xdoc = null;
-        //XmlTextReader xtr = new XmlTextReader(
-        if (xdoc == null) xdoc = new XmlDocument();
-        xdoc.PreserveWhitespace = true;
-        xdoc.LoadXml(xml);
-        //xdoc.Load(soubor);
-        return (XmlNode)xdoc.FirstChild;
+        var xmlDocument = new XmlDocument();
+        xmlDocument.PreserveWhitespace = true;
+        xmlDocument.LoadXml(xml);
+        return xmlDocument.FirstChild;
     }
 
     /// <summary>
-    ///     Remove illegal XML characters from a string.
+    /// Removes illegal XML characters from a string, keeping only characters allowed by XML 1.0.
     /// </summary>
+    /// <param name="xml">The XML string to sanitize.</param>
     public static string SanitizeXmlString(string xml)
     {
-        if (xml == null) ThrowEx.IsNull("AtributteXmlIsNull");
-        //xml = xml.Replace("&", " and ");
+        if (xml == null) { ThrowEx.IsNull("xml"); return string.Empty; }
         var buffer = new StringBuilder(xml.Length);
-        foreach (var c in xml)
-            if (IsLegalXmlChar(c))
-                buffer.Append(c);
+        foreach (var character in xml)
+            if (IsLegalXmlChar(character))
+                buffer.Append(character);
         return buffer.ToString();
     }
 
     /// <summary>
-    ///     Whether a given character is allowed by XML 1.0.
+    /// Determines whether a given character is allowed by XML 1.0 specification.
     /// </summary>
+    /// <param name="character">The Unicode code point to check.</param>
     private static bool IsLegalXmlChar(int character)
     {
         return
-            character == 0x9 /* == '\t' == 9   */ ||
-            character == 0xA /* == '\n' == 10  */ ||
-            character == 0xD /* == '\r' == 13  */ ||
+            character == 0x9 ||
+            character == 0xA ||
+            character == 0xD ||
             (character >= 0x20 && character <= 0xD7FF) ||
             (character >= 0xE000 && character <= 0xFFFD) ||
             (character >= 0x10000 && character <= 0x10FFFF)
@@ -171,14 +190,14 @@ XDocument.Load(csproj);
     }
 
     /// <summary>
-    ///     A1 can be XML or path
+    /// Loads XML from a string or file path and returns the parsed XmlDocument. Returns null on parse failure.
     /// </summary>
-    /// <param name="xml"></param>
+    /// <param name="xml">The XML content string or file path.</param>
     public static
 #if ASYNC
-        async Task<XmlDocument>
+        async Task<XmlDocument?>
 #else
-XmlDocument
+XmlDocument?
 #endif
         LoadXml(string xml)
     {
@@ -188,25 +207,29 @@ XmlDocument
                 await
 #endif
                     File.ReadAllTextAsync(xml);
-        var xd = new XmlDocument();
+        var xmlDocument = new XmlDocument();
         try
         {
-            xd.LoadXml(xml);
+            xmlDocument.LoadXml(xml);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            ThrowEx.CustomWithStackTrace(ex);
+            ThrowEx.CustomWithStackTrace(exception);
             return null;
         }
 
-        return xd;
+        return xmlDocument;
     }
 
-    public static string RemoveXmlDeclaration(string vstup)
+    /// <summary>
+    /// Removes all forms of XML declaration from the input text.
+    /// </summary>
+    /// <param name="text">The text containing XML declarations to remove.</param>
+    public static string RemoveXmlDeclaration(string text)
     {
-        vstup = Regex.Replace(vstup, @"<\?xml.*?\?>", "");
-        vstup = Regex.Replace(vstup, @"<\?xml.*?\>", "");
-        vstup = Regex.Replace(vstup, @"<\?xml.*?\/>", "");
-        return vstup;
+        text = Regex.Replace(text, @"<\?xml.*?\?>", "");
+        text = Regex.Replace(text, @"<\?xml.*?\>", "");
+        text = Regex.Replace(text, @"<\?xml.*?\/>", "");
+        return text;
     }
 }

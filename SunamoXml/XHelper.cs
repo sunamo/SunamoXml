@@ -1,208 +1,251 @@
 namespace SunamoXml;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+/// <summary>
+/// Helper class for XElement-based XML operations including namespace management, element search, attribute access, and XML minification.
+/// </summary>
 public partial class XHelper
 {
-    public static Dictionary<string, string> ns = new();
-    public static string InnerTextOfNode(XElement xe, string value)
+    /// <summary>
+    /// Dictionary mapping namespace prefixes to their URI values.
+    /// </summary>
+    public static Dictionary<string, string> Namespaces { get; set; } = new();
+
+    /// <summary>
+    /// Returns the inner text of a descendant element with the specified name.
+    /// </summary>
+    /// <param name="element">The parent XElement to search.</param>
+    /// <param name="elementName">The descendant element name to find.</param>
+    public static string InnerTextOfNode(XElement element, string elementName)
     {
-        var desc = xe.Descendants(XName.Get(value));
-        if (desc.Count() == 0)
+        var descendants = element.Descendants(XName.Get(elementName));
+        if (!descendants.Any())
             return string.Empty;
-        var first = desc.First();
+        var first = descendants.First();
         return first.Value;
     }
 
     /// <summary>
-    ///     Při nenalezení vrací null
+    /// Returns the value of the specified attribute, or null if not found.
     /// </summary>
-    /// <param name = "item"></param>
-    /// <param name = "attr"></param>
-    public static string Attr(XElement item, string attr)
+    /// <param name="element">The XElement to search.</param>
+    /// <param name="attributeName">The attribute name to find.</param>
+    public static string? Attr(XElement element, string attributeName)
     {
-        var xa = item.Attribute(XName.Get(attr));
-        if (xa != null)
-            return xa.Value;
+        var xmlAttribute = element.Attribute(XName.Get(attributeName));
+        if (xmlAttribute != null)
+            return xmlAttribute.Value;
         return null;
     }
 
-    public static XElement GetElementOfNameWithAttr(XElement node, string nazev, string attr, string value)
+    /// <summary>
+    /// Finds an element by tag name that also has an attribute with the specified value. Supports namespace-prefixed tag names.
+    /// </summary>
+    /// <param name="node">The parent XElement to search.</param>
+    /// <param name="tagName">The tag name to match, optionally with namespace prefix (e.g., "ns:tag").</param>
+    /// <param name="attributeName">The attribute name to match.</param>
+    /// <param name="attributeValue">The expected attribute value.</param>
+    public static XElement? GetElementOfNameWithAttr(XElement node, string tagName, string attributeName, string attributeValue)
     {
-        if (nazev.Contains(":"))
+        if (tagName.Contains(':'))
         {
-            var(p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
-            p = ns[p];
+            var (namespaceName, localName) = SH.GetPartsByLocationNoOut(tagName, ':');
+            namespaceName = Namespaces[namespaceName];
             foreach (var item in node.Elements())
-                if (item.Name.LocalName == z && item.Name.NamespaceName == p)
-                    if (Attr(item, attr) == value)
+                if (item.Name.LocalName == localName && item.Name.NamespaceName == namespaceName)
+                    if (Attr(item, attributeName) == attributeValue)
                         return item;
         }
         else
         {
             foreach (var item in node.DescendantsAndSelf())
-                if (item.Name.LocalName == nazev)
-                    if (Attr(item, attr) == value)
+                if (item.Name.LocalName == tagName)
+                    if (Attr(item, attributeName) == attributeValue)
                         return item;
         }
 
         return null;
     }
 
-    public static XElement MakeAllElementsWithDefaultNs(XElement settings)
+    /// <summary>
+    /// Re-creates the element with all descendants shifted into the default namespace.
+    /// </summary>
+    /// <param name="element">The XElement to transform.</param>
+    public static XElement MakeAllElementsWithDefaultNs(XElement element)
     {
-        var ns2 = ns[string.Empty];
-        var toInsert = new List<object>();
-        // shift ALL elements in the settings document into the target namespace
-        foreach (var element in settings.DescendantsAndSelf())
-            //element.Name =  element.Name.LocalName;
-            element.Name = XName.Get(element.Name.LocalName, ns2);
-        //foreach (var element in settings.Attributes())
-        //{
-        //    //element.Name = XName.Get(element.Name.LocalName, ns2);
-        //    toInsert.Add(element);
-        //}
-        //t
-        var vr = new XElement(XName.Get(settings.Name.LocalName, ns2), settings.Attributes(), settings.Descendants());
-        return vr;
+        var defaultNamespace = Namespaces[string.Empty];
+        foreach (var descendant in element.DescendantsAndSelf())
+            descendant.Name = XName.Get(descendant.Name.LocalName, defaultNamespace);
+        var result = new XElement(XName.Get(element.Name.LocalName, defaultNamespace), element.Attributes(), element.Descendants());
+        return result;
     }
 
-    public static List<XElement> GetElementsOfName(XElement node, string nazev)
+    /// <summary>
+    /// Returns all direct child elements matching the specified tag name. Supports namespace-prefixed tag names.
+    /// </summary>
+    /// <param name="node">The parent XElement to search.</param>
+    /// <param name="tagName">The tag name to match.</param>
+    public static List<XElement> GetElementsOfName(XElement node, string tagName)
     {
         var result = new List<XElement>();
-        if (nazev.Contains(":"))
+        if (tagName.Contains(':'))
         {
             foreach (var item in node.Elements())
-                if (IsRightTag(item, nazev))
+                if (IsRightTag(item, tagName))
                     result.Add(item);
         }
         else
         {
             foreach (var item in node.Elements())
-                if (item.Name.LocalName == nazev)
+                if (item.Name.LocalName == tagName)
                     result.Add(item);
         }
 
         return result;
     }
 
-    public static IList<XElement> GetElementsOfNameWithAttrContains(XElement group, string tag, string attr, string value /*, bool caseSensitive = false*/)
+    /// <summary>
+    /// Returns elements matching the specified tag name whose attribute value contains the specified text.
+    /// </summary>
+    /// <param name="element">The parent XElement to search.</param>
+    /// <param name="tagName">The tag name to match.</param>
+    /// <param name="attributeName">The attribute name to check.</param>
+    /// <param name="attributeValue">The text that the attribute value must contain.</param>
+    public static IList<XElement> GetElementsOfNameWithAttrContains(XElement element, string tagName, string attributeName, string attributeValue)
     {
-        return GetElementsOfNameWithAttrWorker(group, tag, attr, value /*, true, caseSensitive*/);
-    }
-
-    public static void AddXmlNamespaces(XmlNamespaceManager nsmgr)
-    {
-        foreach (string item in nsmgr)
-        {
-            // Jaký je typ item, at nemusím používat slovník
-            var value = nsmgr.LookupNamespace(item);
-            if (!ns.ContainsKey(item))
-                ns.Add(item, value);
-        }
-    }
-
-    /// <param name = "p"></param>
-    public static void AddXmlNamespaces(params string[] p)
-    {
-        for (var i = 0; i < p.Length; i++)
-            //.TrimEnd('/') + "/"
-            ns.Add(p[i].Replace("xmlns:", ""), p[++i]);
-    }
-
-    public static void AddXmlNamespaces(Dictionary<string, string> dictionary)
-    {
-        foreach (var item in dictionary)
-            ns.Add(item.Key, item.Value);
-    }
-
-    public static 
-#if ASYNC
-        async Task<XDocument>
-#else
-    XDocument 
-#endif
-    CreateXDocument(string contentOrFn)
-    {
-        if (File.Exists(contentOrFn))
-            contentOrFn = 
-#if ASYNC
-                await
-#endif
-            File.ReadAllTextAsync(contentOrFn);
-        var enB = Encoding.UTF8.GetBytes(contentOrFn).ToList();
-        XDocument xd = null;
-        using (var oStream = new MemoryStream(enB.ToArray()))
-        using (var oReader = XmlReader.Create(oStream))
-        {
-            xd = XDocument.Load(oReader);
-        }
-
-        return xd;
+        return GetElementsOfNameWithAttrWorker(element, tagName, attributeName, attributeValue);
     }
 
     /// <summary>
-    ///     Získá element jména A2 value A1.
-    ///     Umí pracovat value NS, stačí zadat zkratku namepsace jako ns:tab
+    /// Adds all namespace declarations from an XmlNamespaceManager to the shared Namespaces dictionary.
     /// </summary>
-    /// <param name = "node"></param>
-    /// <param name = "nazev"></param>
-    public static XElement GetElementOfName(XContainer node, string nazev)
+    /// <param name="namespaceManager">The namespace manager to read from.</param>
+    public static void AddXmlNamespaces(XmlNamespaceManager namespaceManager)
     {
-        if (nazev.Contains(":"))
+        foreach (string item in namespaceManager)
         {
-            var(p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
-            p = ns[p];
+            var namespaceValue = namespaceManager.LookupNamespace(item) ?? string.Empty;
+            if (!Namespaces.ContainsKey(item))
+                Namespaces.Add(item, namespaceValue);
+        }
+    }
+
+    /// <summary>
+    /// Adds namespace declarations from alternating prefix-URI pairs.
+    /// </summary>
+    /// <param name="namespacePairs">Alternating namespace prefix (with "xmlns:" prefix) and URI values.</param>
+    public static void AddXmlNamespaces(params string[] namespacePairs)
+    {
+        for (var i = 0; i < namespacePairs.Length; i++)
+            Namespaces.Add(namespacePairs[i].Replace("xmlns:", ""), namespacePairs[++i]);
+    }
+
+    /// <summary>
+    /// Adds all entries from a dictionary to the shared Namespaces dictionary.
+    /// </summary>
+    /// <param name="dictionary">The dictionary of prefix-URI pairs to add.</param>
+    public static void AddXmlNamespaces(Dictionary<string, string> dictionary)
+    {
+        foreach (var item in dictionary)
+            Namespaces.Add(item.Key, item.Value);
+    }
+
+    /// <summary>
+    /// Creates an XDocument from an XML string or file path.
+    /// </summary>
+    /// <param name="contentOrFilePath">The XML content string or file path.</param>
+    public static
+#if ASYNC
+        async Task<XDocument>
+#else
+    XDocument
+#endif
+    CreateXDocument(string contentOrFilePath)
+    {
+        if (File.Exists(contentOrFilePath))
+            contentOrFilePath =
+#if ASYNC
+                await
+#endif
+            File.ReadAllTextAsync(contentOrFilePath);
+        var encodedBytes = Encoding.UTF8.GetBytes(contentOrFilePath).ToList();
+        XDocument document;
+        using (var memoryStream = new MemoryStream(encodedBytes.ToArray()))
+        using (var xmlReader = XmlReader.Create(memoryStream))
+        {
+            document = XDocument.Load(xmlReader);
+        }
+
+        return document;
+    }
+
+    /// <summary>
+    /// Finds an element by name within the container. Supports namespace-prefixed tag names (e.g., "ns:tag").
+    /// </summary>
+    /// <param name="node">The container to search.</param>
+    /// <param name="tagName">The tag name to find.</param>
+    public static XElement? GetElementOfName(XContainer node, string tagName)
+    {
+        if (tagName.Contains(':'))
+        {
+            var (namespaceName, localName) = SH.GetPartsByLocationNoOut(tagName, ':');
+            namespaceName = Namespaces[namespaceName];
             foreach (var item in node.Elements())
             {
-                if (IsRightTag(item, z, p))
-                {
-                }
-
-                if (item.Name.LocalName == z && item.Name.NamespaceName == p)
+                if (item.Name.LocalName == localName && item.Name.NamespaceName == namespaceName)
                     return item;
             }
         }
         else
         {
             foreach (var item in node.Elements())
-                if (item.Name.LocalName == nazev)
+                if (item.Name.LocalName == tagName)
                     return item;
         }
 
         return null;
     }
 
-    public static bool IsRightTag(XElement xName, string nazev)
+    /// <summary>
+    /// Checks if the element matches the namespace-prefixed tag name.
+    /// </summary>
+    /// <param name="element">The XElement to check.</param>
+    /// <param name="tagName">The namespace-prefixed tag name (e.g., "ns:tag").</param>
+    public static bool IsRightTag(XElement element, string tagName)
     {
-        return IsRightTag(xName.Name, nazev);
+        return IsRightTag(element.Name, tagName);
     }
 
     /// <summary>
-    ///     Will split A2 to LocalName and NamespaceName
+    /// Checks if the XName matches the namespace-prefixed tag name by splitting into local name and namespace.
     /// </summary>
-    /// <param name = "xName"></param>
-    /// <param name = "nazev"></param>
-    public static bool IsRightTag(XName xName, string nazev)
+    /// <param name="xName">The XName to check.</param>
+    /// <param name="tagName">The namespace-prefixed tag name (e.g., "ns:tag").</param>
+    public static bool IsRightTag(XName xName, string tagName)
     {
-        var(p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
-        p = ns[p];
-        if (xName.LocalName == z && xName.NamespaceName == p)
+        var (namespaceName, localName) = SH.GetPartsByLocationNoOut(tagName, ':');
+        namespaceName = Namespaces[namespaceName];
+        if (xName.LocalName == localName && xName.NamespaceName == namespaceName)
             return true;
         return false;
     }
 
-    public static bool IsRightTag(XElement xName, string localName, string namespaceName)
+    /// <summary>
+    /// Checks if the element matches the specified local name and namespace.
+    /// </summary>
+    /// <param name="element">The XElement to check.</param>
+    /// <param name="localName">The expected local name.</param>
+    /// <param name="namespaceName">The expected namespace name.</param>
+    public static bool IsRightTag(XElement element, string localName, string namespaceName)
     {
-        return IsRightTag(xName.Name, localName, namespaceName);
+        return IsRightTag(element.Name, localName, namespaceName);
     }
 
     /// <summary>
-    ///     Into A3 is passing shortcut
+    /// Checks if the XName matches the specified local name and namespace.
     /// </summary>
-    /// <param name = "xName"></param>
-    /// <param name = "localName"></param>
-    /// <param name = "namespaceName"></param>
+    /// <param name="xName">The XName to check.</param>
+    /// <param name="localName">The expected local name.</param>
+    /// <param name="namespaceName">The expected namespace name.</param>
     public static bool IsRightTag(XName xName, string localName, string namespaceName)
     {
         if (xName.LocalName == localName && xName.NamespaceName == namespaceName)
@@ -210,33 +253,42 @@ public partial class XHelper
         return false;
     }
 
-    public static List<XElement> GetElementsOfNameRecursive(XElement node, string nazev)
+    /// <summary>
+    /// Returns all descendant elements (including self) matching the specified tag name. Supports namespace-prefixed tag names.
+    /// </summary>
+    /// <param name="node">The XElement to search recursively.</param>
+    /// <param name="tagName">The tag name to match.</param>
+    public static List<XElement> GetElementsOfNameRecursive(XElement node, string tagName)
     {
-        var vr = new List<XElement>();
-        if (nazev.Contains(":"))
+        var result = new List<XElement>();
+        if (tagName.Contains(':'))
         {
-            var(p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
-            p = ns[p];
+            var (namespaceName, localName) = SH.GetPartsByLocationNoOut(tagName, ':');
+            namespaceName = Namespaces[namespaceName];
             foreach (var item in node.DescendantsAndSelf())
-                if (item.Name.LocalName == z && item.Name.NamespaceName == p)
-                    vr.Add(item);
+                if (item.Name.LocalName == localName && item.Name.NamespaceName == namespaceName)
+                    result.Add(item);
         }
         else
         {
             foreach (var item in node.DescendantsAndSelf())
-                if (item.Name.LocalName == nazev)
-                    vr.Add(item);
+                if (item.Name.LocalName == tagName)
+                    result.Add(item);
         }
 
-        return vr;
+        return result;
     }
 
-    public static string Minify(string c)
+    /// <summary>
+    /// Minifies XML by removing newlines, collapsing whitespace, and removing spaces between tags.
+    /// </summary>
+    /// <param name="text">The XML text to minify.</param>
+    public static string Minify(string text)
     {
-        c = c.Replace(Environment.NewLine, string.Empty);
-        c = SHReplace.ReplaceAllWhitecharsForSpace(c);
-        c = SHReplace.ReplaceAllDoubleSpaceToSingle(c);
-        c = c.Replace("> <", "><");
-        return c;
+        text = text.Replace(Environment.NewLine, string.Empty);
+        text = SHReplace.ReplaceAllWhitecharsForSpace(text);
+        text = SHReplace.ReplaceAllDoubleSpaceToSingle(text);
+        text = text.Replace("> <", "><");
+        return text;
     }
 }

@@ -1,250 +1,264 @@
 namespace SunamoXml;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+/// <summary>
+/// Helper class for XML operations on <see cref="XmlNode"/> and <see cref="XmlDocument"/>, including attribute access, node search, formatting, and manipulation.
+/// </summary>
 public static partial class XmlHelper
 {
-    public static XmlAttribute foundedNode;
-    public static XmlNode GetAttributeWithName(XmlNode item, string p)
+    /// <summary>
+    /// Stores the last attribute found by <see cref="GetAttributeWithName"/>.
+    /// </summary>
+    public static XmlAttribute? FoundAttribute { get; set; }
+
+    /// <summary>
+    /// Finds the first attribute with the specified name on the given node.
+    /// </summary>
+    /// <param name="node">The XML node to search.</param>
+    /// <param name="attributeName">The attribute name to find.</param>
+    public static XmlNode? GetAttributeWithName(XmlNode node, string attributeName)
     {
-        foreach (XmlAttribute item2 in item.Attributes)
-            if (item2.Name == p)
+        if (node.Attributes == null) return null;
+        foreach (XmlAttribute item in node.Attributes)
+            if (item.Name == attributeName)
             {
-                foundedNode = item2;
-                return item2;
+                FoundAttribute = item;
+                return item;
             }
 
         return null;
     }
 
-    public static bool IsXml(string str)
+    /// <summary>
+    /// Determines whether the string appears to be XML content by checking if it starts with a less-than sign.
+    /// </summary>
+    /// <param name="text">The string to check.</param>
+    public static bool IsXml(string text)
     {
-        if (!string.IsNullOrEmpty(str) && str.TrimStart().StartsWith("<"))
+        if (!string.IsNullOrEmpty(text) && text.TrimStart().StartsWith('<'))
             return true;
         return false;
     }
 
     /// <summary>
-    ///     Usage: FubuCsprojFile
-    ///     A2 is used only in exception
+    /// Formats XML content with indentation. Returns the formatted result or an error message on XML parse failure.
     /// </summary>
-    /// <param name = "xmlContent"></param>
-    /// <param name = "path"></param>
-    /// <returns></returns>
+    /// <param name="xmlContent">The XML content to format.</param>
+    /// <param name="path">Optional file path for error context in exception messages.</param>
     public static string FormatXmlInMemory(string xmlContent, string path = "")
     {
-        MemoryStream mStream = new();
-        XmlTextWriter writer = new(mStream, Encoding.Unicode);
-        //XmlNamespacesHolder h = new XmlNamespacesHolder();
-        //document = h.ParseAndRemoveNamespacesXmlDocument(xml);
+        MemoryStream memoryStream = new();
+        XmlTextWriter writer = new(memoryStream, Encoding.Unicode);
         XmlDocument document = new();
         string result;
         try
         {
             document.LoadXml(xmlContent);
             writer.Formatting = Formatting.Indented;
-            // Write the XML into argument formatting XmlTextWriter
             document.WriteContentTo(writer);
             writer.Flush();
-            mStream.Flush();
-            // Have to rewind the MemoryStream in order to read
-            // its contents.
-            mStream.Position = 0;
-            // Read MemoryStream contents into argument StreamReader.
-            StreamReader sReader = new(mStream);
-            // Extract the text from the StreamReader.
-            var formattedXml = sReader.ReadToEnd();
+            memoryStream.Flush();
+            memoryStream.Position = 0;
+            StreamReader streamReader = new(memoryStream);
+            var formattedXml = streamReader.ReadToEnd();
             result = formattedXml;
         }
-        catch (XmlException ex)
+        catch (XmlException exception)
         {
-            var nl = Environment.NewLine;
-            return "Exception:" + path + nl + nl + ex.Message;
-        //ThrowEx.CustomWithStackTrace(ex);
+            return "Exception:" + path + Environment.NewLine + Environment.NewLine + exception.Message;
         }
 
-        mStream.Close();
-        // 'Cannot access argument closed Stream.'
-        //writer.Close();
+        memoryStream.Close();
         return result;
     }
 
-    public static string GetAttrValueOrInnerElement(XmlNode item, string v)
+    /// <summary>
+    /// Returns the attribute value or the inner text of a child element with the specified name.
+    /// </summary>
+    /// <param name="node">The XML node to search.</param>
+    /// <param name="attributeName">The attribute or child element name.</param>
+    public static string? GetAttrValueOrInnerElement(XmlNode node, string attributeName)
     {
-        var attr = item.Attributes[v];
-        if (attr != null)
-            return attr.Value;
-        var childNodes = ChildNodes(item);
-        if (childNodes.Count != 0)
+        var attribute = node.Attributes?[attributeName];
+        if (attribute != null)
+            return attribute.Value;
+        var childNodeList = ChildNodes(node);
+        if (childNodeList.Count != 0)
         {
-            var el = childNodes.First(data => data.Name == v);
-            return el?.Value;
+            var element = childNodeList.First(childNode => childNode.Name == attributeName);
+            return element?.Value;
         }
 
         Debugger.Break();
         return null;
     }
 
-    public static string GetAttributeWithNameValue(XmlNode item, string p)
+    /// <summary>
+    /// Returns the inner XML value of the first attribute with the specified name.
+    /// </summary>
+    /// <param name="node">The XML node to search.</param>
+    /// <param name="attributeName">The attribute name to find.</param>
+    public static string? GetAttributeWithNameValue(XmlNode node, string attributeName)
     {
-        foreach (XmlAttribute item2 in item.Attributes)
-            if (item2.Name == p)
+        if (node.Attributes == null) return null;
+        foreach (XmlAttribute item in node.Attributes)
+            if (item.Name == attributeName)
             {
-                foundedNode = item2;
-                return item2.InnerXml;
+                FoundAttribute = item;
+                return item.InnerXml;
             }
 
         return null;
     }
 
     /// <summary>
-    ///     because return type is Object and can't use item.ChildNodes.First(data => data.) etc.
-    ///     XmlNodeList dědí jen z IEnumerable, IDisposable
+    /// Returns child nodes as a generic list since XmlNodeList only implements IEnumerable.
     /// </summary>
-    /// <returns></returns>
-    public static List<XmlNode> ChildNodes(XmlNode xml)
+    /// <param name="node">The parent XML node.</param>
+    public static List<XmlNode> ChildNodes(XmlNode node)
     {
-        // TODO: až přilinkuji SunamoExtensions tak .COunt
         var result = new List<XmlNode>();
-        foreach (XmlNode item in xml.ChildNodes)
+        foreach (XmlNode item in node.ChildNodes)
             result.Add(item);
         return result;
     }
 
     /// <summary>
-    ///     WOrkaround for error The node to be removed is not argument child of this node.
+    /// Replaces a child node by matching outer XML, working around the "node to be removed is not a child" error.
     /// </summary>
-    /// <param name = "from"></param>
-    /// <param name = "to"></param>
-    public static XmlNode ReplaceChildNodeByOuterHtml(XmlNode from, XmlNode to)
+    /// <param name="sourceNode">The node to be replaced.</param>
+    /// <param name="targetNode">The replacement node.</param>
+    public static XmlNode ReplaceChildNodeByOuterHtml(XmlNode sourceNode, XmlNode targetNode)
     {
-        var pn = from.ParentNode;
-        var chn = pn.ChildNodes;
-        if (chn.Contains(from))
+        var parentNode = sourceNode.ParentNode!;
+        var childNodes = parentNode.ChildNodes;
+        if (childNodes.Contains(sourceNode))
         {
-            from = from.ParentNode.ReplaceChild(to, from);
+            sourceNode = sourceNode.ParentNode!.ReplaceChild(targetNode, sourceNode);
         }
         else
         {
-            var toOx = to.OuterXml;
-            for (var i = 0; i < chn.Count; i++)
+            var targetOuterXml = targetNode.OuterXml;
+            for (var i = 0; i < childNodes.Count; i++)
             {
-                var ox = chn[i].OuterXml;
-                if (ox == toOx)
+                var childNode = childNodes[i];
+                if (childNode != null)
                 {
-                    from = pn.ReplaceChild(to, chn[i]);
-                    break;
+                    var outerXml = childNode.OuterXml;
+                    if (outerXml == targetOuterXml)
+                    {
+                        sourceNode = parentNode.ReplaceChild(targetNode, childNode);
+                        break;
+                    }
                 }
             }
         }
 
-        return from;
+        return sourceNode;
     }
 
     /// <summary>
-    ///     Vrátí InnerXml nebo hodnotu CData podle typu uzlu
+    /// Returns the inner XML or CDATA value depending on the node type.
     /// </summary>
-    /// <param name = "eventDescriptionNode"></param>
-    public static string GetInnerXml(XmlNode eventDescriptionNode)
+    /// <param name="node">The XML node to read.</param>
+    public static string GetInnerXml(XmlNode node)
     {
-        var eventDescription = "";
-        if (eventDescriptionNode is XmlCDataSection)
+        var innerContent = "";
+        if (node is XmlCDataSection cdataSection)
         {
-            var cdataSection = eventDescriptionNode as XmlCDataSection;
-            eventDescription = cdataSection.Value;
+            innerContent = cdataSection.Value ?? string.Empty;
         }
         else
         {
-            if (eventDescriptionNode != null)
-                eventDescription = eventDescriptionNode.InnerXml;
+            if (node != null)
+                innerContent = node.InnerXml;
         }
 
-        return eventDescription;
+        return innerContent;
     }
 
-    private const string dummyXmlns = "https://sunamo.cz/_/dummyXmlns";
-    public static void RemoveAttrsFromRoot(ref XmlDocument x, string newRootElementName, params string[] attrsName)
+    /// <summary>
+    /// Removes specified attributes from the document root and re-creates it with a new element name.
+    /// </summary>
+    /// <param name="xmlDocument">The XML document to modify (passed by reference).</param>
+    /// <param name="newRootElementName">The name for the new root element.</param>
+    /// <param name="attributeNames">The attribute names to remove from the root.</param>
+    public static void RemoveAttrsFromRoot(ref XmlDocument xmlDocument, string newRootElementName, params string[] attributeNames)
     {
-        var docNew = new XmlDocument();
-        var newRoot = docNew.CreateElement(newRootElementName);
-        foreach (XmlAttribute item in x.DocumentElement.Attributes)
-            if (!attrsName.Contains(item.Name))
+        var newDocument = new XmlDocument();
+        var newRoot = newDocument.CreateElement(newRootElementName);
+        foreach (XmlAttribute item in xmlDocument.DocumentElement!.Attributes)
+            if (!attributeNames.Contains(item.Name))
             {
-                var item2 = docNew.ImportNode(item, true);
-                var xa = (XmlAttribute)item2;
-                newRoot.Attributes.Append(xa);
+                var importedNode = newDocument.ImportNode(item, true);
+                var xmlAttribute = (XmlAttribute)importedNode;
+                newRoot.Attributes.Append(xmlAttribute);
             }
 
         if (newRoot.Attributes.Count == 0)
         {
-            var xa = docNew.CreateAttribute("xmlns");
-            xa.Value = "http://";
-            newRoot.Attributes.Append(xa);
+            var xmlAttribute = newDocument.CreateAttribute("xmlns");
+            xmlAttribute.Value = "http://";
+            newRoot.Attributes.Append(xmlAttribute);
         }
 
-        docNew.AppendChild(newRoot);
-        newRoot.InnerXml = x.DocumentElement.InnerXml;
-        x = docNew;
-    }
-
-    public static void AddAttrsToRoot(ref XmlDocument x, string newRootElementName, params string[] attrs)
-    {
-        var docNew = new XmlDocument();
-        var newRoot = docNew.CreateElement(newRootElementName);
-        if (!ThrowEx.HasOddNumberOfElements("attrs", attrs))
-            return;
-        var addedAny = false;
-        //for (int i = 0; i < attrs.Length; i++)
-        //{
-        //    //var xa =
-        //    var x1 = attrs[++i];
-        //    if (!string.IsNullOrEmpty(x1))
-        //    {
-        //        newRoot.SetAttribute(attrs[i], x1);
-        //        addedAny = true;
-        //    }
-        //    //newRoot.Attributes.Append();
-        //}
-        //var x2 = XmlHelper.Attr(newRoot, "xmlns");
-        //if (x2 == dummyXmlns)
-        //{
-        //    newRoot.Attributes.Remove(XmlHelper.foundedNode);
-        //}
-        if (!addedAny)
-            return;
-        docNew.AppendChild(newRoot);
-        newRoot.InnerXml = x.DocumentElement.InnerXml;
-        x = docNew;
-    }
-
-    public static string InnerTextOfNode(XmlNode xe)
-    {
-        return xe.InnerText;
-    }
-
-    public static XmlDocument CreateXmlDocument(string content)
-    {
-        var data = new XmlDocument();
-        data.LoadXml(content);
-        data.PreserveWhitespace = true;
-        return data;
+        newDocument.AppendChild(newRoot);
+        newRoot.InnerXml = xmlDocument.DocumentElement.InnerXml;
+        xmlDocument = newDocument;
     }
 
     /// <summary>
-    ///     Vrátí null pokud se nepodaří nalézt
+    /// Adds attributes to the document root, re-creating it with a new element name. Currently performs validation only.
     /// </summary>
-    /// <param name = "item"></param>
-    /// <param name = "p"></param>
-    public static XmlNode GetChildNodeWithName(XmlNode item, string p)
+    /// <param name="xmlDocument">The XML document to modify (passed by reference).</param>
+    /// <param name="newRootElementName">The name for the new root element.</param>
+    /// <param name="attributes">Alternating attribute names and values to add.</param>
+    public static void AddAttrsToRoot(ref XmlDocument xmlDocument, string newRootElementName, params string[] attributes)
     {
-        foreach (XmlNode item2 in item.ChildNodes)
-            if (item2.Name == p)
-                return item2;
+        if (!ThrowEx.HasOddNumberOfElements("attributes", attributes))
+            return;
+    }
+
+    /// <summary>
+    /// Returns the inner text of the specified XML node.
+    /// </summary>
+    /// <param name="node">The XML node to read.</param>
+    public static string InnerTextOfNode(XmlNode node)
+    {
+        return node.InnerText;
+    }
+
+    /// <summary>
+    /// Creates and returns a new XmlDocument with whitespace preservation from the specified XML content.
+    /// </summary>
+    /// <param name="content">The XML content string to load.</param>
+    public static XmlDocument CreateXmlDocument(string content)
+    {
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml(content);
+        xmlDocument.PreserveWhitespace = true;
+        return xmlDocument;
+    }
+
+    /// <summary>
+    /// Returns the first child node with the specified name, or null if not found.
+    /// </summary>
+    /// <param name="node">The parent XML node to search.</param>
+    /// <param name="tagName">The child node name to find.</param>
+    public static XmlNode? GetChildNodeWithName(XmlNode node, string tagName)
+    {
+        foreach (XmlNode item in node.ChildNodes)
+            if (item.Name == tagName)
+                return item;
         return null;
     }
 
-    public static XmlNode GetElementOfName(XmlNode e, string n)
+    /// <summary>
+    /// Returns the first child element with the specified tag name.
+    /// </summary>
+    /// <param name="node">The parent XML node.</param>
+    /// <param name="tagName">The tag name to find.</param>
+    public static XmlNode? GetElementOfName(XmlNode node, string tagName)
     {
-        return e.ChildNodes.First(n);
+        return node.ChildNodes.First(tagName);
     }
 }

@@ -1,17 +1,24 @@
 namespace SunamoXml._sunamo.SunamoDictionary;
 
+/// <summary>
+/// Helper methods for converting dictionaries to other collection types.
+/// </summary>
 internal class DictionaryHelper
 {
-    internal static List<string> GetListStringFromDictionary(Dictionary<string, string> p)
+    /// <summary>
+    /// Converts a string dictionary to a flat list of alternating keys and values.
+    /// </summary>
+    /// <param name="dictionary">The dictionary to convert.</param>
+    internal static List<string> GetListStringFromDictionary(Dictionary<string, string> dictionary)
     {
-        var vr = new List<string>();
+        var result = new List<string>();
 
-        foreach (var item in p)
+        foreach (var item in dictionary)
         {
-            vr.Add(item.Key);
-            vr.Add(item.Value);
+            result.Add(item.Key);
+            result.Add(item.Value);
         }
 
-        return vr;
+        return result;
     }
 }

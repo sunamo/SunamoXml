@@ -1,86 +1,77 @@
 namespace SunamoXml;
 
+/// <summary>
+/// Parses XML documents while extracting and removing namespace declarations, storing them in an XmlNamespaceManager for later use.
+/// </summary>
 public class XmlNamespacesHolder
 {
-    //public NameTable nt = new NameTable();
-    public XmlNamespaceManager nsmgr;
+    /// <summary>
+    /// The namespace manager populated during parsing with all extracted namespace declarations.
+    /// </summary>
+    public XmlNamespaceManager? NamespaceManager { get; set; }
 
     /// <summary>
-    ///     Return XmlDocument but dont use return value
-    ///     Just use XHelper class, because with XmlDocument is still not working
+    /// Parses an XML string, extracts namespace declarations into <see cref="NamespaceManager"/>, and removes them from the document.
     /// </summary>
-    /// <param name="content"></param>
+    /// <param name="content">The XML content to parse.</param>
     public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content)
     {
-        var xd = new XmlDocument();
-        xd = ParseAndRemoveNamespacesXmlDocument(content, xd.NameTable);
-        return xd;
+        var xmlDocument = new XmlDocument();
+        xmlDocument = ParseAndRemoveNamespacesXmlDocument(content, xmlDocument.NameTable);
+        return xmlDocument;
     }
 
     /// <summary>
-    ///     A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
-    ///     Return XmlDocument but dont use return value
-    ///     Just use XHelper class, because with XmlDocument is still not working
+    /// Parses an XML string using the specified name table, extracts namespace declarations, and removes them from the document.
+    /// The default prefix is used for the default namespace since XPath queries require a prefix (/:Tag doesn't work, but /prefix:Tag does).
     /// </summary>
-    /// <param name="content"></param>
-    /// <param name="nt"></param>
-    /// <param name="defaultPrefix"></param>
-    public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content, XmlNameTable nt, string defaultPrefix = "x")
+    /// <param name="content">The XML content to parse.</param>
+    /// <param name="nameTable">The XmlNameTable to use for the namespace manager.</param>
+    /// <param name="defaultPrefix">The prefix to assign to the default namespace.</param>
+    public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content, XmlNameTable nameTable, string defaultPrefix = "x")
     {
-        var xd = new XmlDocument();
-        /*
-        * In default state have already three keys:
-        * "" = ""
-        xmlns=http://www.w3.org/2000/xmlns/
-        xml=http://www.w3.org/XML/1998/namespace
-        */
-        nsmgr = new XmlNamespaceManager(nt);
-        xd.LoadXml(content);
-        foreach (XmlNode item in xd.ChildNodes)
+        var xmlDocument = new XmlDocument();
+        NamespaceManager = new XmlNamespaceManager(nameTable);
+        xmlDocument.LoadXml(content);
+        foreach (XmlNode item in xmlDocument.ChildNodes)
         {
             if (item.NodeType == XmlNodeType.XmlDeclaration) continue;
             var root = item;
-            for (var i = root.Attributes.Count - 1; i >= 0; i--)
+            for (var i = root.Attributes!.Count - 1; i >= 0; i--)
             {
-                var att = root.Attributes[i];
-                //
+                var attribute = root.Attributes[i];
                 var key = defaultPrefix;
-                if (att.Name.StartsWith("xmlns"))
+                if (attribute.Name.StartsWith("xmlns"))
                 {
-                    if (att.Name.Contains(":")) key = att.Name.Substring(6);
-                    nsmgr.AddNamespace(key, att.Value);
-                    // TODO: Delete wrong attribute but in outerXml is still figuring
+                    if (attribute.Name.Contains(':')) key = attribute.Name.Substring(6);
+                    NamespaceManager.AddNamespace(key, attribute.Value);
                     root.Attributes.RemoveAt(i);
                 }
             }
         }
 
-        var outer = xd.OuterXml;
-        return xd;
+        return xmlDocument;
     }
 
     /// <summary>
-    ///     Return XmlDocument but dont use return value
-    ///     Just use XHelper class, because with XmlDocument is still not working
+    /// Parses an XML string, removes namespace declarations, and returns the result as an XDocument.
     /// </summary>
-    /// <param name="content"></param>
+    /// <param name="content">The XML content to parse.</param>
     public XDocument ParseAndRemoveNamespacesXDocument(string content)
     {
-        var xd = ParseAndRemoveNamespacesXmlDocument(content);
-        return XDocument.Parse(xd.OuterXml);
+        var xmlDocument = ParseAndRemoveNamespacesXmlDocument(content);
+        return XDocument.Parse(xmlDocument.OuterXml);
     }
 
     /// <summary>
-    ///     A3 is default prefix because cant be empty anytime (/:Tag or /Tag dont working but /prefix:Tag yes)
-    ///     Return XmlDocument but dont use return value
-    ///     Just use XHelper class, because with XmlDocument is still not working
+    /// Parses an XML string using the specified name table, removes namespace declarations, and returns the result as an XDocument.
     /// </summary>
-    /// <param name="content"></param>
-    /// <param name="nt"></param>
-    /// <param name="defaultPrefix"></param>
-    public XDocument ParseAndRemoveNamespacesXDocument(string content, XmlNameTable nt, string defaultPrefix = "x")
+    /// <param name="content">The XML content to parse.</param>
+    /// <param name="nameTable">The XmlNameTable to use.</param>
+    /// <param name="defaultPrefix">The prefix to assign to the default namespace.</param>
+    public XDocument ParseAndRemoveNamespacesXDocument(string content, XmlNameTable nameTable, string defaultPrefix = "x")
     {
-        var xd = ParseAndRemoveNamespacesXmlDocument(content, nt, defaultPrefix);
-        return new XDocument(xd.OuterXml);
+        var xmlDocument = ParseAndRemoveNamespacesXmlDocument(content, nameTable, defaultPrefix);
+        return new XDocument(xmlDocument.OuterXml);
     }
 }

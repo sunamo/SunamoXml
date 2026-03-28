@@ -1,27 +1,33 @@
 namespace SunamoXml.Generators;
 
+/// <summary>
+/// Extends <see cref="XmlGenerator"/> with selective attribute writing, allowing certain attributes to be excluded.
+/// </summary>
 public class XmlGeneratorSelective : XmlGenerator
 {
     /// <summary>
-    ///     A1 nemůže být null, musí to být v nejhorším případě Array.Empty
+    /// Writes an opening tag with attributes, excluding those whose names appear in the exclusion list.
     /// </summary>
-    /// <param name="p"></param>
-    /// <param name="vynechat"></param>
-    /// <param name="p_2"></param>
-    public void WriteTagWithAttrsSelective(string p, List<string> vynechat, List<string> p_2)
+    /// <param name="tagName">The element name.</param>
+    /// <param name="excludedAttributes">List of attribute names to exclude from the output.</param>
+    /// <param name="attributes">List of alternating attribute names and values.</param>
+    public void WriteTagWithAttrsSelective(string tagName, List<string> excludedAttributes, List<string> attributes)
     {
-        stringBuilder.AppendFormat("<{0} ", p);
-        for (var i = 0; i < p_2.Count / 2; i++)
+        StringBuilder.AppendFormat("<{0} ", tagName);
+        for (var i = 0; i < attributes.Count / 2; i++)
         {
-            var nameAtt = p_2[i * 2];
-            if (!vynechat.Contains(nameAtt)) stringBuilder.AppendFormat("{0}=\"{1}\"", nameAtt, p_2[i * 2 + 1]);
+            var attributeName = attributes[i * 2];
+            if (!excludedAttributes.Contains(attributeName)) StringBuilder.AppendFormat("{0}=\"{1}\"", attributeName, attributes[i * 2 + 1]);
         }
 
-        stringBuilder.Append(">");
+        StringBuilder.Append(">");
     }
 
+    /// <summary>
+    /// Returns the generated XML content as a string.
+    /// </summary>
     public override string ToString()
     {
-        return stringBuilder.ToString();
+        return StringBuilder.ToString();
     }
 }

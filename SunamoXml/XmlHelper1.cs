@@ -1,39 +1,55 @@
 namespace SunamoXml;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+/// <summary>
+/// Additional XML helper methods for attribute access, element search, and attribute manipulation on <see cref="XmlNode"/>.
+/// </summary>
 public static partial class XmlHelper
 {
-    public static IList<XmlNode> GetElementsOfName(XmlNode e, string v)
+    /// <summary>
+    /// Returns all child elements with the specified tag name.
+    /// </summary>
+    /// <param name="node">The parent XML node.</param>
+    /// <param name="tagName">The tag name to match.</param>
+    public static IList<XmlNode> GetElementsOfName(XmlNode node, string tagName)
     {
-        return e.ChildNodes.WithName(v);
+        return node.ChildNodes.WithName(tagName);
     }
 
-    public static string Attr(XmlNode data, string v)
+    /// <summary>
+    /// Returns the value of the attribute with the specified name, or null if not found.
+    /// </summary>
+    /// <param name="node">The XML node to search.</param>
+    /// <param name="attributeName">The attribute name to find.</param>
+    public static string? Attr(XmlNode node, string attributeName)
     {
-        var argument = GetAttributeWithName(data, v);
-        if (argument != null)
-            return argument.Value;
+        var attributeNode = GetAttributeWithName(node, attributeName);
+        if (attributeNode != null)
+            return attributeNode.Value;
         return null;
     }
 
-    public static void SetAttribute(XmlNode node, string include, string rel)
+    /// <summary>
+    /// Sets or creates an attribute with the specified name and value on the given node.
+    /// </summary>
+    /// <param name="node">The XML node to modify.</param>
+    /// <param name="attributeName">The name of the attribute to set.</param>
+    /// <param name="attributeValue">The value to assign to the attribute.</param>
+    public static void SetAttribute(XmlNode node, string attributeName, string attributeValue)
     {
-        var xe = (XmlElement)node;
-        if (xe != null)
+        var xmlElement = (XmlElement)node;
+        if (xmlElement != null)
         {
-            xe.SetAttribute(include, rel);
+            xmlElement.SetAttribute(attributeName, attributeValue);
             return;
         }
 
-        // Working only when attribute
-        var atrValue = Attr(node, include);
-        if (atrValue == null)
+        var existingValue = Attr(node, attributeName);
+        if (existingValue == null)
         {
-            var xa = node.OwnerDocument.CreateAttribute(include);
-            node.Attributes.Append(xa);
+            var xmlAttribute = node.OwnerDocument!.CreateAttribute(attributeName);
+            node.Attributes!.Append(xmlAttribute);
         }
 
-        node.Attributes[include].Value = rel;
+        node.Attributes![attributeName]!.Value = attributeValue;
     }
 }

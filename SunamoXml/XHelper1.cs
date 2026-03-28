@@ -1,85 +1,93 @@
 namespace SunamoXml;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+/// <summary>
+/// Additional XElement-based XML helper methods for namespace extraction, formatting, element search, and value retrieval.
+/// </summary>
 public partial class XHelper
 {
-    public static Dictionary<string, string> XmlNamespaces(XmlNamespaceManager nsmgr, bool withPrexixedXmlnsColon)
+    /// <summary>
+    /// Extracts namespace declarations from an XmlNamespaceManager into a dictionary, optionally prefixed with "xmlns:".
+    /// </summary>
+    /// <param name="namespaceManager">The namespace manager to read from.</param>
+    /// <param name="isWithPrefixedXmlnsColon">Whether to prefix keys with "xmlns:" (or "xmlns" for the default namespace).</param>
+    public static Dictionary<string, string> XmlNamespaces(XmlNamespaceManager namespaceManager, bool isWithPrefixedXmlnsColon)
     {
-        var ns = new Dictionary<string, string>();
-        foreach (string item2 in nsmgr)
+        var namespaceDictionary = new Dictionary<string, string>();
+        foreach (string namespacePrefix in namespaceManager)
         {
-            var item = item2;
-            if (withPrexixedXmlnsColon)
+            var key = namespacePrefix;
+            if (isWithPrefixedXmlnsColon)
             {
-                if (item == string.Empty || item == "xmlns")
-                    item = "xmlns";
+                if (key == string.Empty || key == "xmlns")
+                    key = "xmlns";
                 else
-                    item = "xmlns:" + item;
+                    key = "xmlns:" + key;
             }
 
-            // Jak� je typ item, at nemus�m pou��vat slovn�k
-            var value = nsmgr.LookupNamespace(item2);
-            if (!ns.ContainsKey(item))
-                ns.Add(item, value);
+            var namespaceValue = namespaceManager.LookupNamespace(namespacePrefix) ?? string.Empty;
+            if (!namespaceDictionary.ContainsKey(key))
+                namespaceDictionary.Add(key, namespaceValue);
         }
 
-        return ns;
+        return namespaceDictionary;
     }
 
     /// <summary>
-    ///     If A1 is file, output will be save to file and return null
-    ///     Otherwise return string
+    /// Formats XML content with proper indentation. If input is a file path, saves the result back to the file and returns null. Otherwise returns the formatted string.
     /// </summary>
-    /// <param name = "pathOrContent"></param>
-    public static 
+    /// <param name="pathOrContent">The file path or XML content string.</param>
+    public static
 #if ASYNC
-        async Task<string>
+        async Task<string?>
 #else
-    string 
+    string?
 #endif
     FormatXml(string pathOrContent)
     {
         var xmlFormat = pathOrContent;
         if (File.Exists(pathOrContent))
-            xmlFormat = 
+            xmlFormat =
 #if ASYNC
                 await
 #endif
             File.ReadAllTextAsync(pathOrContent);
-        var h = new XmlNamespacesHolder();
-        var doc = h.ParseAndRemoveNamespacesXDocument(xmlFormat);
-        var formatted = doc.ToString();
+        var namespacesHolder = new XmlNamespacesHolder();
+        var document = namespacesHolder.ParseAndRemoveNamespacesXDocument(xmlFormat);
+        var formatted = document.ToString();
         formatted = formatted.Replace(" xmlns=\"\"", string.Empty);
-        //HReplace.ReplaceAll2(formatted, string.Empty, " xmlns=\"\"");
         if (File.Exists(pathOrContent))
         {
 #if ASYNC
             await
 #endif
             File.WriteAllTextAsync(pathOrContent, formatted);
-            //ThisApp.Success(Translate.FromKey(XlfKeys.ChangesSavedToFile));
             return null;
         }
 
-        //ThisApp.Success(Translate.FromKey(XlfKeys.ChangesSavedToClipboard));
         return formatted;
     }
 
+    /// <summary>
+    /// Formats XML content in memory using XDocument parsing. Returns the original string on parse failure.
+    /// </summary>
+    /// <param name="xml">The XML string to format.</param>
     public static string FormatXmlInMemory(string xml)
     {
         try
         {
-            var doc = XDocument.Parse(xml);
-            return doc.ToString();
+            var document = XDocument.Parse(xml);
+            return document.ToString();
         }
         catch (Exception)
         {
-            // Handle and throw if fatal exception here; don't just ignore them
             return xml;
         }
     }
 
+    /// <summary>
+    /// Returns the inner XML content of an XElement.
+    /// </summary>
+    /// <param name="parent">The parent XElement to read from.</param>
     public static string GetInnerXml(XElement parent)
     {
         var reader = parent.CreateReader();
@@ -87,43 +95,58 @@ public partial class XHelper
         return reader.ReadInnerXml();
     }
 
-    public static List<XElement> GetElementsOfNameWithAttr(XElement xElement, string tag, string attr, string value /*,
-        bool caseSensitive*/)
+    /// <summary>
+    /// Returns elements matching the specified tag name whose attribute has the exact specified value.
+    /// </summary>
+    /// <param name="element">The parent XElement to search.</param>
+    /// <param name="tagName">The tag name to match.</param>
+    /// <param name="attributeName">The attribute name to check.</param>
+    /// <param name="attributeValue">The expected attribute value.</param>
+    public static List<XElement> GetElementsOfNameWithAttr(XElement element, string tagName, string attributeName, string attributeValue)
     {
-        return GetElementsOfNameWithAttrWorker(xElement, tag, attr, value /*, false, caseSensitive*/);
+        return GetElementsOfNameWithAttrWorker(element, tagName, attributeName, attributeValue);
     }
 
-    public static List<XElement> GetElementsOfNameWithAttrWorker(XElement xElement, string tag, string attr, string value /*, bool enoughIsContainsAttribute, bool caseSensitive*/)
+    /// <summary>
+    /// Worker method that finds elements by tag name whose attribute value contains the specified text.
+    /// </summary>
+    /// <param name="element">The parent XElement to search.</param>
+    /// <param name="tagName">The tag name to match.</param>
+    /// <param name="attributeName">The attribute name to check.</param>
+    /// <param name="attributeValue">The text that the attribute value must contain.</param>
+    public static List<XElement> GetElementsOfNameWithAttrWorker(XElement element, string tagName, string attributeName, string attributeValue)
     {
-        var vr = new List<XElement>();
-        var element = GetElementsOfNameRecursive(xElement, tag);
-        foreach (var item in element)
+        var result = new List<XElement>();
+        var elements = GetElementsOfNameRecursive(element, tagName);
+        foreach (var item in elements)
         {
-            var attrValue = Attr(item, attr);
-            if (attrValue.Contains(value) /*SH.ContainsBoolBool(attrValue, value, enoughIsContainsAttribute, caseSensitive)*/)
-                vr.Add(item);
+            var foundAttributeValue = Attr(item, attributeName);
+            if (foundAttributeValue != null && foundAttributeValue.Contains(attributeValue))
+                result.Add(item);
         }
 
-        return vr;
+        return result;
     }
 
-    /// <param name = "item"></param>
-    /// <param name = "p"></param>
-    public static XElement GetElementOfNameRecursive(XElement node, string nazev)
+    /// <summary>
+    /// Finds the first descendant element (including self) with the specified tag name. Supports namespace-prefixed tag names.
+    /// </summary>
+    /// <param name="node">The XElement to search recursively.</param>
+    /// <param name="tagName">The tag name to find.</param>
+    public static XElement? GetElementOfNameRecursive(XElement node, string tagName)
     {
-        //bool ns = true;
-        if (nazev.Contains(":"))
+        if (tagName.Contains(':'))
         {
-            var(p, z) = SH.GetPartsByLocationNoOut(nazev, ':');
-            p = ns[p];
+            var (namespaceName, localName) = SH.GetPartsByLocationNoOut(tagName, ':');
+            namespaceName = Namespaces[namespaceName];
             foreach (var item in node.DescendantsAndSelf())
-                if (item.Name.LocalName == z && item.Name.NamespaceName == p)
+                if (item.Name.LocalName == localName && item.Name.NamespaceName == namespaceName)
                     return item;
         }
         else
         {
             foreach (var item in node.DescendantsAndSelf())
-                if (item.Name.LocalName == nazev)
+                if (item.Name.LocalName == tagName)
                     return item;
         }
 
@@ -131,62 +154,81 @@ public partial class XHelper
     }
 
     /// <summary>
-    ///     Is usage only in _Uap/SocialNetworksManager -> open for find out how looks input data and then move to RegexHelper
+    /// Returns the concatenated text values of all sub-elements separated by the specified delimiter, with XML tags replaced.
     /// </summary>
-    /// <param name = "p"></param>
-    /// <param name = "deli"></param>
-    public static string ReturnValueAllSubElementsSeparatedBy(XElement p, string deli)
+    /// <param name="element">The XElement to extract values from.</param>
+    /// <param name="delimiter">The delimiter to insert between values.</param>
+    public static string ReturnValueAllSubElementsSeparatedBy(XElement element, string delimiter)
     {
         var stringBuilder = new StringBuilder();
-        var xml = GetXml(p);
-        var mc = Regex.Matches(xml, "<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>");
-        var nahrazeno = new List<string>();
-        foreach (Match item in mc)
-            if (!nahrazeno.Contains(item.Value))
+        var xml = GetXml(element);
+        var matches = Regex.Matches(xml, "<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>");
+        var replacedValues = new List<string>();
+        foreach (Match item in matches)
+            if (!replacedValues.Contains(item.Value))
             {
-                nahrazeno.Add(item.Value);
-                xml = xml.Replace(item.Value, deli);
+                replacedValues.Add(item.Value);
+                xml = xml.Replace(item.Value, delimiter);
             }
 
         stringBuilder.Append(xml);
-        return stringBuilder.ToString().Replace(deli + deli, deli);
+        return stringBuilder.ToString().Replace(delimiter + delimiter, delimiter);
     }
 
+    /// <summary>
+    /// Serializes an XElement to its XML string representation.
+    /// </summary>
+    /// <param name="node">The XElement to serialize.</param>
     public static string GetXml(XElement node)
     {
-        var sw = new StringWriter();
-        var xtw = XmlWriter.Create(sw);
-        node.WriteTo(xtw);
-        return sw.ToString();
+        var stringWriter = new StringWriter();
+        var xmlWriter = XmlWriter.Create(stringWriter);
+        node.WriteTo(xmlWriter);
+        return stringWriter.ToString();
     }
 
-    public static XElement GetElementOfSecondLevel(XElement var, string first, string second)
+    /// <summary>
+    /// Returns the child element found at the second nesting level (firstLevelName/secondLevelName).
+    /// </summary>
+    /// <param name="parentElement">The root XElement to search from.</param>
+    /// <param name="firstLevelName">The first-level element name.</param>
+    /// <param name="secondLevelName">The second-level element name.</param>
+    public static XElement? GetElementOfSecondLevel(XElement parentElement, string firstLevelName, string secondLevelName)
     {
-        var f = var.Element(XName.Get(first));
-        if (f != null)
+        var firstLevelElement = parentElement.Element(XName.Get(firstLevelName));
+        if (firstLevelElement != null)
         {
-            var text = f.Element(XName.Get(second));
-            return text;
+            var secondLevelElement = firstLevelElement.Element(XName.Get(secondLevelName));
+            return secondLevelElement;
         }
 
         return null;
     }
 
-    public static string GetValueOfElementOfSecondLevelOrSE(XElement var, string first, string second)
+    /// <summary>
+    /// Returns the trimmed value of a second-level element, or an empty string if not found.
+    /// </summary>
+    /// <param name="parentElement">The root XElement to search from.</param>
+    /// <param name="firstLevelName">The first-level element name.</param>
+    /// <param name="secondLevelName">The second-level element name.</param>
+    public static string GetValueOfElementOfSecondLevelOrSE(XElement parentElement, string firstLevelName, string secondLevelName)
     {
-        var xe = GetElementOfSecondLevel(var, first, second);
-        if (xe != null)
-            return xe.Value.Trim();
+        var element = GetElementOfSecondLevel(parentElement, firstLevelName, secondLevelName);
+        if (element != null)
+            return element.Value.Trim();
         return "";
     }
 
-    /// <param name = "var"></param>
-    /// <param name = "p"></param>
-    public static string GetValueOfElementOfNameOrSE(XElement var, string nazev)
+    /// <summary>
+    /// Returns the trimmed value of a named element, or an empty string if not found.
+    /// </summary>
+    /// <param name="parentElement">The XElement to search.</param>
+    /// <param name="tagName">The element name to find.</param>
+    public static string GetValueOfElementOfNameOrSE(XElement parentElement, string tagName)
     {
-        var xe = GetElementOfName(var, nazev);
-        if (xe == null)
+        var element = GetElementOfName(parentElement, tagName);
+        if (element == null)
             return "";
-        return xe.Value.Trim();
+        return element.Value.Trim();
     }
 }
