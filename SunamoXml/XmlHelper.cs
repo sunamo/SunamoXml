@@ -34,7 +34,7 @@ public static partial class XmlHelper
     /// <param name="text">The string to check.</param>
     public static bool IsXml(string text)
     {
-        if (!string.IsNullOrEmpty(text) && text.TrimStart().StartsWith('<'))
+        if (!string.IsNullOrEmpty(text) && text.TrimStart().StartsWith("<"))
             return true;
         return false;
     }
