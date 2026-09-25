@@ -41,12 +41,12 @@ XDocument.Load(csprojPath);
 #if ASYNC
                 await
 #endif
-                    File.ReadAllTextAsync(csprojPath);
+                    FileAsync.ReadAllTextAsync(csprojPath);
             text = RemoveNamespace(xmlNamespace, text);
 #if ASYNC
             await
 #endif
-                File.WriteAllTextAsync(csprojPath, text);
+                FileAsync.WriteAllTextAsync(csprojPath, text);
         }
     }
 
@@ -206,7 +206,7 @@ XmlDocument?
 #if ASYNC
                 await
 #endif
-                    File.ReadAllTextAsync(xml);
+                    FileAsync.ReadAllTextAsync(xml);
         var xmlDocument = new XmlDocument();
         try
         {

@@ -1,3 +1,4 @@
+#pragma warning disable IDE0060 // parametry zachovány kvůli veřejnému API
 namespace SunamoXml;
 
 /// <summary>
@@ -34,7 +35,7 @@ public static partial class XmlHelper
     /// <param name="text">The string to check.</param>
     public static bool IsXml(string text)
     {
-        if (!string.IsNullOrEmpty(text) && text.TrimStart().StartsWith('<'))
+        if (!string.IsNullOrEmpty(text) && text.TrimStart().StartsWith("<"))
             return true;
         return false;
     }

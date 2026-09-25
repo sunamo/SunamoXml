@@ -50,7 +50,7 @@ public partial class XHelper
 #if ASYNC
                 await
 #endif
-            File.ReadAllTextAsync(pathOrContent);
+            FileAsync.ReadAllTextAsync(pathOrContent);
         var namespacesHolder = new XmlNamespacesHolder();
         var document = namespacesHolder.ParseAndRemoveNamespacesXDocument(xmlFormat);
         var formatted = document.ToString();
@@ -60,7 +60,7 @@ public partial class XHelper
 #if ASYNC
             await
 #endif
-            File.WriteAllTextAsync(pathOrContent, formatted);
+            FileAsync.WriteAllTextAsync(pathOrContent, formatted);
             return null;
         }
 
