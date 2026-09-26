@@ -166,7 +166,7 @@ public partial class XHelper
 #if ASYNC
                 await
 #endif
-            File.ReadAllTextAsync(contentOrFilePath);
+            FileAsync.ReadAllTextAsync(contentOrFilePath);
         var encodedBytes = Encoding.UTF8.GetBytes(contentOrFilePath).ToList();
         XDocument document;
         using (var memoryStream = new MemoryStream(encodedBytes.ToArray()))
