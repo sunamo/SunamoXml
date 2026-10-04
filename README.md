@@ -1,5 +1,10 @@
 # SunamoXml
 
+## Short description
+
+Knihovna pro práci s XML (generátory XmlGenerator a XmlGeneratorNS2 a další pomocné třídy). Součást sbírky pinp s testy a Runnerem.
+
+
 Working with XML
 
 ## Overview
