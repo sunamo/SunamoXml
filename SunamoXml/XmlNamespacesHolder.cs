@@ -1,9 +1,20 @@
 namespace SunamoXml;
 
+/// <summary>
+/// Represents the xml namespaces holder type.
+/// </summary>
 public class XmlNamespacesHolder
 {
+    /// <summary>
+    /// Gets or sets the namespace manager.
+    /// </summary>
     public XmlNamespaceManager? NamespaceManager { get; set; }
 
+    /// <summary>
+    /// Parse and remove namespaces xml document.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    /// <returns>The parse and remove namespaces xml document result.</returns>
     public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content)
     {
         var xmlDocument = new XmlDocument();
@@ -11,6 +22,13 @@ public class XmlNamespacesHolder
         return xmlDocument;
     }
 
+    /// <summary>
+    /// Parse and remove namespaces xml document.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    /// <param name="nameTable">The name table.</param>
+    /// <param name="defaultPrefix">The default prefix.</param>
+    /// <returns>The parse and remove namespaces xml document result.</returns>
     public XmlDocument ParseAndRemoveNamespacesXmlDocument(string content, XmlNameTable nameTable, string defaultPrefix = "x")
     {
         var xmlDocument = new XmlDocument();
@@ -36,12 +54,22 @@ public class XmlNamespacesHolder
         return xmlDocument;
     }
 
+    /// <summary>
+    /// Parse and remove namespaces x document.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    /// <returns>The parse and remove namespaces x document result.</returns>
     public XDocument ParseAndRemoveNamespacesXDocument(string content)
     {
         var xmlDocument = ParseAndRemoveNamespacesXmlDocument(content);
         return XDocument.Parse(xmlDocument.OuterXml);
     }
 
+    /// <summary>
+    /// Parse and remove namespaces x document.
+    /// </summary>
+    /// <param name="xmlDocument.OuterXml">The xml document outer xml.</param>
+    /// <returns>The parse and remove namespaces x document result.</returns>
     public XDocument ParseAndRemoveNamespacesXDocument(string content, XmlNameTable nameTable, string defaultPrefix = "x")
     {
         var xmlDocument = ParseAndRemoveNamespacesXmlDocument(content, nameTable, defaultPrefix);
