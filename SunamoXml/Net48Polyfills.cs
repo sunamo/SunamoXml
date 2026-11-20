@@ -1,4 +1,4 @@
-// Kompatibilita pro net48/netstandard2.0 - File async API pridano az v .NET Core (stejny vzor jako SunamoFileSystem/Net48Polyfills.cs).
+// Compatibility for net48/netstandard2.0 - the File async API was added only in .NET Core (same pattern as SunamoFileSystem/Net48Polyfills.cs).
 namespace SunamoXml;
 
 internal static class FileAsync
