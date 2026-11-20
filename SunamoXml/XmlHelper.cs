@@ -1,4 +1,4 @@
-#pragma warning disable IDE0060 // parametry zachovány kvůli veřejnému API
+#pragma warning disable IDE0060 // parameters kept because of the public API
 namespace SunamoXml;
 
 public static partial class XmlHelper
